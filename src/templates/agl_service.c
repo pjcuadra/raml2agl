@@ -1,19 +1,12 @@
-/*
- * Copyright (C) 2016, 2017 "IoT.bzh"
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-#include "roverdriving-service-binding.hpp"
+{% include 'c-license.c' %}
+{% from 'macros.c' import iterate_post_fn_params %}
+
+extern "C"
+{
+   #define AFB_BINDING_VERSION 2
+   #include <afb/afb-binding.h>
+};
+
 
 #include <cstddef>
 #include <cstdio>
@@ -40,21 +33,13 @@ static void {{ verb_name }}(struct afb_req request) {
 
   AFB_NOTICE("[{{ api_name }}] Calling {{ verb_name }}");
 
-  {% if verb_type == 'post' %}
-  {% if 'body' in verb_body %}
-  {% if 'application/json' in verb_body['body'] %}
-  {% if 'properties' in verb_body['body']['application/json'] %}
-    {% for param_key, param in verb_body['body']['application/json']['properties'].items() %}
+  {% call(param_key, param, is_last = False) iterate_post_fn_params(verb_body) %}
       if (!json_object_object_get_ex(args, "{{ param_key }}", &val)) {
         AFB_ERROR("[{{ api_name }}] No {{ param_key }} param provided");
         afb_req_fail(request, "bad-request", "No {{ param_key }} param provided");
         return;
       }
-    {% endfor %}
-  {% endif %}
-  {% endif %}
-  {% endif %}
-  {% endif %}
+  {% endcall %}
 
   obj.{{ verb_name }}(
     {% if verb_type == 'post' %}

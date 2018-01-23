@@ -167,7 +167,8 @@ if __name__ == '__main__':
     env = Environment(
         loader=FileSystemLoader(path),
         trim_blocks=True,
-        lstrip_blocks=True
+        lstrip_blocks=True,
+        keep_trailing_newline=False
     )
 
     env.filters.update(filters)
