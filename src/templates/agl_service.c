@@ -68,7 +68,12 @@ static void {{ verb_name }}(struct afb_req request) {
 static const struct afb_verb_v2 verbs[] = {
 	/*Without security*/
   {% for verb_name, verb_desc in verbs.items() %}
-	{.verb = "{{ verb_name }}", .callback = {{ verb_name }}, .auth = NULL, .info = "Auto Generated - {{ verb_name }}", .session = 0},
+  {% if 'description' in verb_desc %}
+  {% set desc = verb_desc['description'] %}
+  {% else %}
+  {% set desc = "Auto Generated - {{ verb_name }}" %}
+  {% endif %}
+	{.verb = "{{ verb_name }}", .callback = {{ verb_name }}, .auth = NULL, .info = "{{ desc }}", .session = 0},
   {% endfor %}
 	{.verb= NULL, .callback=NULL, .auth = NULL, .info = NULL, .session = 0 }
 };

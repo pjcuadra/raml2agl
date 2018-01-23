@@ -12,8 +12,19 @@ mediaType: application/json
 /stop:
   get: None
 /setspeed:
-  get: None
+  description: "Set the speed"
+  get:
+    responses:
+      200:
+        body:
+          properties:
+            number_one:
+              type: integer
+            number_two:
+              type: number
   post:
     body:
       application/json:
-        type: integer
+        properties:
+          name:
+            type: string
