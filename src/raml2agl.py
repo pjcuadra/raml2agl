@@ -60,8 +60,14 @@ filters = {
 }
 
 def generate_types(env, raml):
-    if not "types" in raml:
+    fh = open(headers_out_path + "/all_types.h","w")
+
+    if not 'types' in raml:
+        fh.write(env.get_template("all_types_header.h").render(all_types = None))
         return
+    else:
+        fh.write(env.get_template("all_types_header.h").render(all_types = raml['types']))
+
 
     # Gen the types classes
     for type_name, type_def in raml['types'].items():
@@ -71,8 +77,7 @@ def generate_types(env, raml):
         fh = open(headers_out_path + "/types/" + type_name + ".h", "w")
         fh.write(cont)
 
-    fh = open(headers_out_path + "/all_types.h","w")
-    fh.write(env.get_template("all_types_header.h").render(all_types = raml['types']))
+
 
 
 def generate_api_class(env, raml):

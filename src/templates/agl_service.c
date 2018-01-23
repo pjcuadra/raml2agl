@@ -15,6 +15,7 @@ extern "C"
 #include <json-c/json.h>
 
 #include <service/{{ class_name }}.h>
+#include <all_types.h>
 
 static {{ class_name }} obj;
 
@@ -41,19 +42,8 @@ static void {{ verb_name }}(struct afb_req request) {
       }
   {% endcall %}
 
-  obj.{{ verb_name }}(
-    {% if verb_type == 'post' %}
-      {% if 'body' in verb_body %}
-      {% if 'application/json' in verb_body['body'] %}
-      {% if 'properties' in verb_body['body']['application/json'] %}
-        {% for param_key, param in verb_body['body']['application/json']['properties'].items() %}
-          json_object_object_get_ex(args, "{{ param_key }}", &val) ? {{ param['type']|json_get_fn }}(val) : static_cast<{{ param['type']|ramltype_to_cpp }}>(0){% if not loop.last %}, {% endif %}
-        {% endfor %}
-      {% endif %}
-      {% endif %}
-      {% endif %}
-    {% endif %}
-  );
+  obj.{{ verb_name }}({% call(param_key, param, is_last = False) iterate_post_fn_params(verb_body) %}
+          json_object_object_get_ex(args, "{{ param_key }}", &val) ? {{ param['type']|json_get_fn }}(val) : static_cast<{{ param['type']|ramltype_to_cpp }}>(0){% if not is_last %}, {% endif %}{% endcall %});
 
   afb_req_success(request, json_object_get(args), NULL);
 }

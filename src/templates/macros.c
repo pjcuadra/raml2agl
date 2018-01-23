@@ -10,7 +10,13 @@
       {% set prop_list = verb_body['body']['properties'] %}
     {% endif %}
   {% endif %}
-{% for param_key, param in prop_list.items() %}{{ caller(param_key, param, loop.last) }}{% endfor %}
+{% for param_key, param in prop_list.items() %}
+{% if not param %}
+{{ caller(param_key, {'type' : 'string'}, loop.last) }}
+{% else %}
+{{ caller(param_key, param, loop.last) }}
+{% endif %}
+{% endfor %}
 {%- endmacro %}
 
 {% macro list_post_fn_params(verb_body) -%}
