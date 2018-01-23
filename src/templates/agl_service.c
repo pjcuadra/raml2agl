@@ -28,13 +28,19 @@ static int init()
 }
 
 {% for verb_name, verb_desc in verbs.items() %}
-{% for verb_type, verb_body in verb_desc.items() %}
 static void {{ verb_name }}(struct afb_req request) {
-  json_object *args = afb_req_json(request), *val = NULL;
+  json_object *args = afb_req_json(request);
+  {% if 'post' in verb_desc %}
+  json_object *val = NULL;
+  {% endif %}
 
   AFB_NOTICE("[{{ api_name }}] Calling {{ verb_name }}");
 
-  {% call(param_key, param, is_last = False) iterate_post_fn_params(verb_body) %}
+  {% if 'post' in verb_desc %}
+  if (args) {
+
+
+  {% call(param_key, param, is_last = False) iterate_post_fn_params(verb_desc['post']) %}
       if (!json_object_object_get_ex(args, "{{ param_key }}", &val)) {
         AFB_ERROR("[{{ api_name }}] No {{ param_key }} param provided");
         afb_req_fail(request, "bad-request", "No {{ param_key }} param provided");
@@ -42,13 +48,15 @@ static void {{ verb_name }}(struct afb_req request) {
       }
   {% endcall %}
 
-  obj.{{ verb_name }}({% call(param_key, param, is_last = False) iterate_post_fn_params(verb_body) %}
+  obj.{{ verb_name }}({% call(param_key, param, is_last = False) iterate_post_fn_params(verb_desc['post']) %}
           json_object_object_get_ex(args, "{{ param_key }}", &val) ? {{ param['type']|json_get_fn }}(val) : static_cast<{{ param['type']|ramltype_to_cpp }}>(0){% if not is_last %}, {% endif %}{% endcall %});
+
+  }
+  {% endif %}
 
   afb_req_success(request, json_object_get(args), NULL);
 }
 
-{% endfor %}
 {% endfor %}
 
 // static const struct afb_auth _afb_auths_v2_monitor[] = {
