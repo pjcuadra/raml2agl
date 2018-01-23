@@ -1,0 +1,20 @@
+#%RAML 1.0
+title: RoverDrivingAuto
+mediaType: [ application/json ]
+/goforward:
+  get: None
+/gobackward:
+  get: None
+/turnright:
+  get: None
+/turnleft:
+  get: None
+/stop:
+  get: None
+/setspeed:
+  post:
+    body:
+      application/json:
+        properties:
+          speed:
+            type: integer
