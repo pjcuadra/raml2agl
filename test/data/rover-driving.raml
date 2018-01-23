@@ -2,15 +2,21 @@
 title: RoverDrivingAuto
 mediaType: application/json
 /goforward:
-  get: None
+  get:
 /gobackward:
-  get: None
+  get:
 /turnright:
-  get: None
+  get:
 /turnleft:
-  get: None
+  get:
 /stop:
-  get: None
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            properties:
+              name: string
 /setspeed:
   description: "Set the speed"
   get:
@@ -20,11 +26,15 @@ mediaType: application/json
           properties:
             number_one:
               type: integer
+              minimum: 0
+              maximum: 480
             number_two:
               type: number
   post:
     body:
       application/json:
         properties:
-          name:
-            type: string
+          speed:
+            type: integer
+    responses:
+      200:

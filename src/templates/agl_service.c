@@ -48,8 +48,7 @@ static void {{ verb_name }}(struct afb_req request) {
       }
   {% endcall %}
 
-  obj.{{ verb_name }}({% call(param_key, param, is_last = False) iterate_post_fn_params(verb_desc['post']) %}
-          json_object_object_get_ex(args, "{{ param_key }}", &val) ? {{ param['type']|json_get_fn }}(val) : static_cast<{{ param['type']|ramltype_to_cpp }}>(0){% if not is_last %}, {% endif %}{% endcall %});
+  obj.{{ verb_name }}({% call(param_key, param, is_last = False) iterate_post_fn_params(verb_desc['post']) %}json_object_object_get_ex(args, "{{ param_key }}", &val) ? {{ param['type']|json_get_fn }}(val) : static_cast<{{ param['type']|ramltype_to_cpp }}>(0){% if not is_last %}, {% endif %}{% endcall %});
 
   }
   {% endif %}

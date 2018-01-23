@@ -50,11 +50,15 @@
 {%- endmacro %}
 
 {% macro list_post_fn_params(verb_body) -%}
+{% if  verb_body %}
 {% call(param_key, param, is_last = False) iterate_post_fn_params(verb_body) %}const {{ param['type']|ramltype_to_cpp }} _{{ param_key|lower }}{% if not is_last %}, {% endif %}{% endcall %}
+{% endif %}
 {%- endmacro %}
 
 {% macro list_get_fn_params(verb_body) -%}
+{% if  verb_body %}
 {% call(param_key, param, is_last = False) iterate_get_fn_params(verb_body) %}const {{ param['type']|ramltype_to_cpp }} &_{{ param_key|lower|strip_ilegal_chars }}{% if not is_last %}, {% endif %}{% endcall %}
+{% endif %}
 {%- endmacro %}
 
 {% macro list_fn_params(verb_body, verb_type) -%}
