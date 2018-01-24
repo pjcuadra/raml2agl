@@ -1,5 +1,5 @@
 #%RAML 1.0
-title: RoverDrivingAuto
+title: Rover driving auto
 mediaType: application/json
 /goforward:
   get:
@@ -7,8 +7,15 @@ mediaType: application/json
   get:
 /turnright:
   get:
+  post:
+    body:
+      properties:
+        type: string
 /turnleft:
   get:
+  post:
+    body:
+      type: string
 /stop:
   get:
     responses:
@@ -17,6 +24,8 @@ mediaType: application/json
           application/json:
             properties:
               name: string
+/setspeed2:
+  description: "Test"
 /setspeed:
   description: "Set the speed"
   get:

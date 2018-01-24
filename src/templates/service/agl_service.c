@@ -1,5 +1,5 @@
 {% include 'c-license.c' %}
-{% from 'macros.c' import iterate_post_fn_params %}
+{% from 'service/macros.c' import list_fn_params_call_json %}
 
 extern "C"
 {
@@ -17,7 +17,7 @@ extern "C"
 #include <service/{{ class_name }}.h>
 #include <all_types.h>
 
-static {{ class_name }} obj;
+static {{ model['class_name'] }} obj;
 
 static int init()
 {
@@ -27,30 +27,29 @@ static int init()
 	return 0;
 }
 
-{% for verb_name, verb_desc in verbs.items() %}
+{% for verb_name, verb_desc in model['methods'].items() %}
 static void {{ verb_name }}(struct afb_req request) {
   json_object *args = afb_req_json(request);
-  {% if 'post' in verb_desc %}
+  {% for param in verb_desc['out_params'] %}
+  {{ param['type']|ramltype_to_cpp }} _var_{{ param['name'] }} = static_cast<{{ param['type']|ramltype_to_cpp }}>(0);
+  {% endfor %}
+  {% if verb_desc['in_params']|length > 0 %}
   json_object *val = NULL;
   {% endif %}
 
-  AFB_NOTICE("[{{ api_name }}] Calling {{ verb_name }}");
+  AFB_NOTICE("[{{ model['api_name'] }}] Calling {{ verb_name }}");
 
-  {% if 'post' in verb_desc %}
+  {% if verb_desc['in_params']|length > 0 %}
   if (args) {
-
-
-  {% call(param_key, param, is_last = False) iterate_post_fn_params(verb_desc['post']) %}
-      if (!json_object_object_get_ex(args, "{{ param_key }}", &val)) {
-        AFB_ERROR("[{{ api_name }}] No {{ param_key }} param provided");
-        afb_req_fail(request, "bad-request", "No {{ param_key }} param provided");
+  {% for param in verb_desc['in_params'] %}
+      if (!json_object_object_get_ex(args, "{{ param['name'] }}", &val)) {
+        AFB_ERROR("[{{ model['api_name'] }}] No '{{ param['name'] }}' param provided");
+        afb_req_fail(request, "bad-request", "No '{{ param['name'] }}' param provided");
         return;
       }
-  {% endcall %}
+  {% endfor %}
 
-  obj.{{ verb_name }}({% call(param_key, param, is_last = False) iterate_post_fn_params(verb_desc['post']) %}json_object_object_get_ex(args, "{{ param_key }}", &val) ? {{ param['type']|json_get_fn }}(val) : static_cast<{{ param['type']|ramltype_to_cpp }}>(0){% if not is_last %}, {% endif %}{% endcall %});
-
-  }
+  obj.{{ verb_name }}({{ list_fn_params_call_json(verb_desc, 6) }})
   {% endif %}
 
   afb_req_success(request, json_object_get(args), NULL);
@@ -66,7 +65,7 @@ static void {{ verb_name }}(struct afb_req request) {
 
 static const struct afb_verb_v2 verbs[] = {
 	/*Without security*/
-  {% for verb_name, verb_desc in verbs.items() %}
+  {% for verb_name, verb_desc in model['methods'].items() %}
   {% if 'description' in verb_desc %}
   {% set desc = verb_desc['description'] %}
   {% else %}
@@ -78,9 +77,9 @@ static const struct afb_verb_v2 verbs[] = {
 };
 
 const struct afb_binding_v2 afbBindingV2 = {
-	.api = "{{ api_name }}",
+	.api = "{{ model['api_name'] }}",
 	.specification = "",
-  .info = "Auto generated - {{ api_name }}",
+  .info = "Auto generated - {{ model['api_name'] }}",
 	.verbs = verbs,
 	.preinit = NULL,
 	.init = init,
