@@ -3,6 +3,7 @@ from ramlParser import parse
 import os
 import yaml
 import json
+import logging
 
 """Collect command-line options in a dictionary"""
 
@@ -14,8 +15,15 @@ source_out_path = out_path + "/src"
 def getopts(argv):
     opts = {}  # Empty dictionary to store key-value pairs.
     while argv:  # While there are arguments left to parse...
-        if argv[0][0] == '-':  # Found a "-name value" pair.
-            opts[argv[0]] = argv[1]  # Add key and value to the dictionary.
+        if argv[0][0] is '-':  # Found a "-name value" pair.
+            if len(argv) > 1:
+                if argv[1][0] != '-':
+                    opts[argv[0]] = argv[1]
+                else:
+                    opts[argv[0]] = True
+            elif len(argv) == 1:
+                opts[argv[0]] = True
+
         # Reduce the argument list by copying it starting from index 1.
         argv = argv[1:]
     return opts
@@ -130,12 +138,14 @@ if __name__ == '__main__':
     model_file = ''
 
     if '-i' in myargs:
-        print(myargs['-i'])
         model_file = myargs['-i']
         f = open(model_file, "r")
         y = yaml.load(f.read())
     else:
         exit(1)
+
+    if '-v' in myargs:
+        logging.basicConfig(level=logging.INFO)
 
     if '-o' in myargs:
         out_path = myargs['-o']
@@ -145,6 +155,10 @@ if __name__ == '__main__':
 
     if '-s' in myargs:
         source_out_path = myargs['-s']
+
+    logging.info("Provided params - " + json.dumps(myargs,
+                                                   sort_keys=True,
+                                                   indent=4))
 
     # Create output dir
     creat_dir(out_path)
@@ -174,5 +188,3 @@ if __name__ == '__main__':
     # generate_api_class(env, jy)
     generate_agl_service(env, jmodel)
     generate_api_class(env, jmodel)
-
-    print(myargs)

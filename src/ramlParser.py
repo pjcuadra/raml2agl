@@ -11,14 +11,12 @@ success_return_codes = [200, 201]
 def filter_media_type(raml):
 
     for key, value in raml.items():
-        # print('k:{} v:{}'.format(key, value))
 
         if isinstance(value, dict) or isinstance(value, list):
             for x in value.keys():
                 if x in media_type:
                     value = value[x]
                     raml[key] = value
-                    print(value)
 
             value = filter_media_type(value)
 
@@ -55,11 +53,9 @@ def parse_type(yraml, jraml):
         return
 
     for key, value in yraml.items():
-        print('k:{} v:{}'.format(key, value))
         if 'type' not in value:
             continue
 
-        print(jraml)
         jraml.append({'type': value['type'], 'name': key})
 
 
@@ -156,7 +152,7 @@ def parse_JSON(yraml):
 
 def parse(raml_file_path):
     # Needed to resolve includes
-    model_loc = os.path.dirname(raml_file_path)
+    # model_loc = os.path.dirname(raml_file_path)
 
     # Read the model
     f = open(raml_file_path, "r")
@@ -166,6 +162,6 @@ def parse(raml_file_path):
     filter_media_type(yraml)
 
     jraml = parse_JSON(yraml)
-    print(json.dumps(jraml, sort_keys=True, indent=4))
+    logging.info('JSON Model - ' + json.dumps(jraml, sort_keys=True, indent=4))
 
     return jraml
