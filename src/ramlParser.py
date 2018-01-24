@@ -16,6 +16,7 @@
 import yaml
 import json
 import logging
+from collections import OrderedDict
 
 
 media_type = ["application/json", "application/xml"]
@@ -43,8 +44,9 @@ def parse_root_raml(yraml, jraml):
 
         # Format the API Name
         if key == 'title':
-            jraml['class_name'] = value.title().replace(" ", "")
-            jraml['api_name'] = jraml['class_name'].lower()
+            jraml['service_class_name'] = "Service"
+            jraml['service_class_name'] += value.title().replace(" ", "")
+            jraml['api_name'] = value.title().replace(" ", "").lower()
             jraml[key] = value.title()
             continue
 
@@ -66,7 +68,9 @@ def parse_type(yraml, jraml):
 
         return
 
-    for key, value in yraml.items():
+    tmp_yraml = OrderedDict(sorted(yraml.items()))
+
+    for key, value in tmp_yraml.items():
         if 'type' not in value:
             continue
 

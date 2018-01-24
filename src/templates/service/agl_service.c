@@ -14,10 +14,10 @@ extern "C"
 
 #include <json-c/json.h>
 
-#include <service/{{ class_name }}.h>
-#include <all_types.h>
+#include <service/{{ model['service_class_name'] }}.h>
+// #include <all_types.h>
 
-static {{ model['class_name'] }} obj;
+static {{ model['service_class_name'] }} obj;
 
 static int init()
 {
@@ -33,6 +33,10 @@ static void {{ verb_name }}(struct afb_req request) {
   {% for param in verb_desc['out_params'] %}
   {{ param['type']|ramltype_to_cpp }} _var_{{ param['name'] }} = static_cast<{{ param['type']|ramltype_to_cpp }}>(0);
   {% endfor %}
+  {% if verb_desc['out_params']|length > 0 %}
+  json_object * new_json = json_object_new_object();
+  json_object * new_sub_json = NULL;
+  {% endif %}
   {% if verb_desc['in_params']|length > 0 %}
   json_object *val = NULL;
   {% endif %}
@@ -48,11 +52,21 @@ static void {{ verb_name }}(struct afb_req request) {
         return;
       }
   {% endfor %}
+  }
 
-  obj.{{ verb_name }}({{ list_fn_params_call_json(verb_desc, 6) }})
   {% endif %}
+  obj.{{ verb_name }}({{ list_fn_params_call_json(verb_desc, 6) }});
 
+  {% for param in verb_desc['out_params'] %}
+  new_sub_json = {{ param['type']|json_new_fn }}(_var_{{ param['name'] }});
+  json_object_object_add(new_json, "{{ param['name'] }}", new_sub_json);
+  {% endfor %}
+
+  {% if verb_desc['out_params']|length > 0 %}
+  afb_req_success(request, new_json, NULL);
+  {% else %}
   afb_req_success(request, json_object_get(args), NULL);
+  {% endif %}
 }
 
 {% endfor %}
@@ -69,7 +83,7 @@ static const struct afb_verb_v2 verbs[] = {
   {% if 'description' in verb_desc %}
   {% set desc = verb_desc['description'] %}
   {% else %}
-  {% set desc = "Auto Generated - {{ verb_name }}" %}
+  {% set desc = "Auto Generated - " ~ verb_name %}
   {% endif %}
 	{.verb = "{{ verb_name }}", .callback = {{ verb_name }}, .auth = NULL, .info = "{{ desc }}", .session = 0},
   {% endfor %}

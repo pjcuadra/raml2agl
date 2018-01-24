@@ -118,7 +118,7 @@ def generate_types(env, raml):
 
 def generate_api_class(env, jmodel):
     # Create the headers and sources
-    file_name = "/service/" + jmodel['class_name']
+    file_name = "/service/" + jmodel['service_class_name']
     header = open(headers_out_path + file_name + ".h", "w")
     source = open(source_out_path + file_name + ".cpp", "w")
 
@@ -150,6 +150,8 @@ if __name__ == '__main__':
     from sys import argv
     myargs = getopts(argv)
     model_file = ''
+    gen_service = False
+    gen_app = False
 
     if '-i' in myargs:
         model_file = myargs['-i']
@@ -170,6 +172,12 @@ if __name__ == '__main__':
     if '-s' in myargs:
         source_out_path = myargs['-s']
 
+    if '--service' in myargs:
+        gen_service = True
+
+    if '--app' in myargs:
+        gen_app = True
+
     logging.info("Provided params - " + json.dumps(myargs,
                                                    sort_keys=True,
                                                    indent=4))
@@ -177,10 +185,14 @@ if __name__ == '__main__':
     # Create output dir
     creat_dir(out_path)
     creat_dir(headers_out_path)
-    creat_dir(headers_out_path + "/types")
-    creat_dir(headers_out_path + "/service")
-    creat_dir(headers_out_path + "/app")
-    creat_dir(source_out_path + "/service")
+    creat_dir(source_out_path)
+
+    if gen_service:
+        creat_dir(source_out_path + "/service")
+        creat_dir(headers_out_path + "/service")
+
+    if gen_app:
+        creat_dir(headers_out_path + "/app")
 
     # Load templates
     path = os.path.dirname(os.path.realpath(__file__)) + "/templates"
@@ -192,8 +204,6 @@ if __name__ == '__main__':
     )
 
     env.filters.update(filters)
-
-    jy = json.loads(json.dumps(y))
 
     jmodel = parse(model_file)
 
