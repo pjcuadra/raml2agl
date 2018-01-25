@@ -153,7 +153,9 @@ def parse_class_methods(yraml, jraml):
         method_name = key[1:]
 
         methods[method_name] = {}
-        methods[method_name]['def'] = value
+
+        if 'description' in value:
+            methods[method_name]['description'] = value['description']
 
         parse_class_method_params(value, methods[method_name])
 

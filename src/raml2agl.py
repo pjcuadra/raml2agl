@@ -148,6 +148,21 @@ def generate_app_class(env, jmodel):
     source.write(source_cont)
 
 
+def generate_app_superclass(env, jmodel):
+    # Create the headers and sources
+    header = open(headers_out_path + "/" + "WebSocketApi.h", "w")
+    source = open(source_out_path + "/app/" + "WebSocketApi.cpp", "w")
+
+    tmpl = env.get_template("types/app/WebSocketApi.h")
+    header_cont = tmpl.render(model=jmodel)
+
+    tmpl = env.get_template("types/app/WebSocketApi.cpp")
+    source_cont = tmpl.render(model=jmodel)
+
+    header.write(header_cont)
+    source.write(source_cont)
+
+
 def generate_agl_service(env, jmodel):
     source = open(source_out_path + "/service/" + jmodel['api_name'] +
                   "-binding-auto.cpp", "w")
@@ -230,3 +245,4 @@ if __name__ == '__main__':
 
     if gen_app:
         generate_app_class(env, jmodel)
+        generate_app_superclass(env, jmodel)

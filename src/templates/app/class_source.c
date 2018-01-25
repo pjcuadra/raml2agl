@@ -2,8 +2,8 @@
 {% from 'service/macros.c' import list_fn_params %}
 
 #include <app/{{ model['class_name'] }}.h>
-{% if model['baseuri'] %}
-{% set uri = model['baseuri'] %}
+{% if 'baseUri' in model %}
+{% set uri = model['baseUri'] %}
 {% else %}
 {% set uri = "localhost:8000/api?token=x" %}
 {% endif %}
@@ -25,10 +25,6 @@ int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }
   {% endif %}
   json_object * response = NULL;
   int rc = 0;
-
-  // TODO: Implement creation of sending json
-  // TODO: Parse uri
-  // TODO: Parse descriptions
 
   {% if verb_desc['in_params']|length > 0 %}
   req =  json_object_new_object();
