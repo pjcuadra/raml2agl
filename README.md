@@ -99,21 +99,21 @@ And the *examples/setget/src/service/setgetter-binding-auto.cpp* looks like;
 ```cpp
 
 static const struct afb_verb_v2 verbs[] = {
-	/*Without security*/
-	{.verb = "setupsensor", .callback = setupsensor, .auth = NULL, .info = "Setup", .session = 0},
-	{.verb = "getdata", .callback = getdata, .auth = NULL, .info = "Get Data", .session = 0},
-	{.verb= NULL, .callback=NULL, .auth = NULL, .info = NULL, .session = 0 }
+  /*Without security*/
+  {.verb = "setupsensor", .callback = setupsensor, .auth = NULL, .info = "Setup", .session = 0},
+  {.verb = "getdata", .callback = getdata, .auth = NULL, .info = "Get Data", .session = 0},
+  {.verb= NULL, .callback=NULL, .auth = NULL, .info = NULL, .session = 0 }
 };
 
 const struct afb_binding_v2 afbBindingV2 = {
-	.api = "sensorinterface",
-	.specification = "",
+  .api = "sensorinterface",
+  .specification = "",
   .info = "Auto generated - Sensor Interface",
-	.verbs = verbs,
-	.preinit = NULL,
-	.init = init,
-	.onevent = NULL,
-	.noconcurrency = 1
+  .verbs = verbs,
+  .preinit = NULL,
+  .init = init,
+  .onevent = NULL,
+  .noconcurrency = 1
 };
 
 ```
