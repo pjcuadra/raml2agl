@@ -132,3 +132,4 @@ const struct afb_binding_v2 afbBindingV2 = {
 * Add pointer to a demo repository
 * Add installing scripts
 * Add unit testing
+* Add more internal documentation in python scripts
