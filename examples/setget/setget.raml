@@ -1,0 +1,15 @@
+#%RAML 1.0
+title: Set Getter
+/get:
+  description: "Get Data"
+  get:
+    responses:
+      200:
+        body:
+          type: integer
+
+/set:
+  description: "Setup"
+  post:
+    body:
+      type: integer
