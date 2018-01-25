@@ -41,7 +41,7 @@ requirements to communicate through the Web Socket with the Service.
 For instance, a simple interface with a setter and a getter can be modeled
 using RAML as follows;
 
-```
+```yaml
 #%RAML 1.0
 title: Set Getter
 /get:
@@ -62,7 +62,7 @@ title: Set Getter
 This model can be found in *examples/setget/setget.raml*. To generate the output
 simply run;
 
-```
+```bash
 cd <proj-root-dir>
 python src/raml2agl.py -i examples/setget/setget.raml -o my_new_out --app
 ```
@@ -70,7 +70,7 @@ python src/raml2agl.py -i examples/setget/setget.raml -o my_new_out --app
 And will generate a C++ class at *examples/my_new_out/include/app/SetGetter.h*
 that looks as follows;
 
-```
+```cpp
 
 class SetGetter : public WebSocketApi {
 public:
@@ -96,7 +96,7 @@ python src/raml2agl.py -i examples/setget/setget.raml -o my_new_out --service
 
 And the *examples/setget/src/service/setgetter-binding-auto.cpp* looks like;
 
-```
+```cpp
 
 static const struct afb_verb_v2 verbs[] = {
 	/*Without security*/
