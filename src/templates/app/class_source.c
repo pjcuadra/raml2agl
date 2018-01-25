@@ -29,16 +29,13 @@ int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }
   {% if verb_desc['in_params']|length > 0 %}
   req =  json_object_new_object();
   {% endif %}
-
   {% for param in verb_desc['in_params'] %}
   new_sub_json = {{ param['type']|json_new_fn }}(in_{{ param['name'] }});
   json_object_object_add(req, "{{ param['name'] }}", new_sub_json);
   {% endfor %}
-
   {% if verb_desc['in_params']|length > 0 %}
   printf("INFO: Verb '{{ verb_name }}' sending %s\n", json_object_to_json_string(req));
   {% endif %}
-
   // Get the response
   rec = this->emit("{{ verb_name }}", req ? json_object_to_json_string(req) : NULL);
   if (!rec) {

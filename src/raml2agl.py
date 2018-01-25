@@ -196,6 +196,8 @@ if __name__ == '__main__':
 
     if '-o' in myargs:
         out_path = myargs['-o']
+        headers_out_path = out_path + "/include"
+        source_out_path = out_path + "/src"
 
     if '-h' in myargs:
         headers_out_path = myargs['-h']

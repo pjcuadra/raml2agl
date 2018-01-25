@@ -61,6 +61,12 @@ WebSocketApi::WebSocketApi(const char * uri, const char * api_name) : uri(uri), 
 	}
 }
 
+WebSocketApi::~WebSocketApi() {
+  afb_wsj1_unref(wsj1);
+  sd_event_unref(loop);
+}
+
+
 /* decrement the count of calls */
 void WebSocketApi::dec_callcount()
 {

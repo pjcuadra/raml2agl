@@ -37,6 +37,8 @@ class WebSocketApi {
 public:
   WebSocketApi(const char * uri, const char * api_name);
 
+  ~WebSocketApi();
+
 protected:
   json_object * emit(const char *verb, const char *object);
 

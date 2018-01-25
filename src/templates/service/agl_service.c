@@ -71,11 +71,11 @@ static void {{ verb_name }}(struct afb_req request) {
 
   {% if verb_desc['out_params']|length > 0 %}
   afb_req_success(request, new_json, NULL);
+  json_object_put(new_json);
   {% else %}
-  afb_req_success(request, json_object_get(args), NULL);
+  afb_req_success(request, args, NULL);
   {% endif %}
 
-  // TODO: Put json obj
 }
 
 {% endfor %}
