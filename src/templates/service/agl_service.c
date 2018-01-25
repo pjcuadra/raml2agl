@@ -88,25 +88,25 @@ static void {{ verb_name }}(struct afb_req request) {
 // };
 
 static const struct afb_verb_v2 verbs[] = {
-	/*Without security*/
+  /*Without security*/
   {% for verb_name, verb_desc in model['methods'].items() %}
   {% if 'description' in verb_desc %}
   {% set desc = verb_desc['description'] %}
   {% else %}
   {% set desc = "Auto Generated - " ~ verb_name %}
   {% endif %}
-	{.verb = "{{ verb_name }}", .callback = {{ verb_name }}, .auth = NULL, .info = "{{ desc }}", .session = 0},
+  {.verb = "{{ verb_name }}", .callback = {{ verb_name }}, .auth = NULL, .info = "{{ desc }}", .session = 0},
   {% endfor %}
-	{.verb= NULL, .callback=NULL, .auth = NULL, .info = NULL, .session = 0 }
+  {.verb= NULL, .callback=NULL, .auth = NULL, .info = NULL, .session = 0 }
 };
 
 const struct afb_binding_v2 afbBindingV2 = {
-	.api = "{{ model['api_name'] }}",
-	.specification = "",
+  .api = "{{ model['api_name'] }}",
+  .specification = "",
   .info = "Auto generated - {{ model['title'] }}",
-	.verbs = verbs,
-	.preinit = NULL,
-	.init = init,
-	.onevent = NULL,
-	.noconcurrency = 1
+  .verbs = verbs,
+  .preinit = NULL,
+  .init = init,
+  .onevent = NULL,
+  .noconcurrency = 1
 };
