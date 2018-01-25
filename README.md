@@ -75,7 +75,7 @@ that looks as follows;
 class SetGetter : public WebSocketApi {
 public:
 
-  Set-Getter();
+  SetGetter();
 
     /** Autogenrated doc for get */
     int get(int &out_default);
