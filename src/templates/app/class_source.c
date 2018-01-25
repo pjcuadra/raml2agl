@@ -26,6 +26,9 @@ int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }
   json_object * response = NULL;
   int rc = 0;
 
+  if (!connected)
+    return -1;
+
   {% if verb_desc['in_params']|length > 0 %}
   req =  json_object_new_object();
   {% endif %}
@@ -38,6 +41,12 @@ int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }
   {% endif %}
   // Get the response
   rec = this->emit("{{ verb_name }}", req ? json_object_to_json_string(req) : NULL);
+
+  // Release the request json object
+  {% if verb_desc['in_params']|length > 0 %}
+  json_object_put(req);
+  {% endif %}
+
   if (!rec) {
     printf("ERROR: Posting error or timeout while waiting for reply\n");
     return -1;
@@ -47,7 +56,6 @@ int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }
   if (!rc) {
     printf("ERROR: Malformed response\n");
     json_object_put(rec);
-    json_object_put(req);
     return -1;
   }
 
@@ -60,14 +68,12 @@ int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }
   if (!rc) {
     printf("ERROR: Malformed response\n");
     json_object_put(rec);
-    json_object_put(req);
     return -1;
   }
   {% endfor %}
 
   printf("INFO: %s\n", json_object_to_json_string_ext(rec, JSON_C_TO_STRING_PRETTY));
 
-  json_object_put(req);
   json_object_put(rec);
 
   return 0;

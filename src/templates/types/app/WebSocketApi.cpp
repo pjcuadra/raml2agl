@@ -41,7 +41,6 @@ int WebSocketApi::callcount = 0;
 sd_event * WebSocketApi::loop = NULL;
 struct afb_wsj1 * WebSocketApi::wsj1 = NULL;
 bool WebSocketApi::reply = false;
-bool WebSocketApi::reply_ok = false;
 json_object * WebSocketApi::curr_reply = NULL;
 
 WebSocketApi::WebSocketApi(const char * uri, const char * api_name) : uri(uri), api_name(api_name) {
@@ -57,8 +56,11 @@ WebSocketApi::WebSocketApi(const char * uri, const char * api_name) : uri(uri), 
 	wsj1 = afb_ws_client_connect_wsj1(loop, uri, &wsj1_itf, NULL);
 	if (wsj1 == NULL) {
 		fprintf(stderr, "connection to %s failed: %m\n", uri);
+    connected = false;
 		return;
 	}
+
+  connected = true;
 }
 
 WebSocketApi::~WebSocketApi() {
@@ -145,6 +147,9 @@ json_object * WebSocketApi::emit(const char *verb, const char *object)
 {
 	if (object == NULL || object[0] == 0)
 		object = "null";
+
+  if (!connected)
+    return NULL;
 
 	wsj1_call(api_name, verb, object);
 

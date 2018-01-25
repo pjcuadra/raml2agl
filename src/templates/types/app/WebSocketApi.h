@@ -41,6 +41,7 @@ public:
 
 protected:
   json_object * emit(const char *verb, const char *object);
+  bool connected;
 
 private:
 
@@ -56,7 +57,7 @@ private:
   const char * uri;
   const char * api_name;
   static json_object * curr_reply;
-  static bool reply_ok;
+
 
   /* decrement the count of calls */
   static void dec_callcount();
