@@ -31,6 +31,7 @@ static int init()
 static void {{ verb_name }}(struct afb_req request) {
   json_object *args = afb_req_json(request);
   {% for param in verb_desc['out_params'] %}
+  {% if param['type'] == 'string' %}const {% endif %}
   {{ param['type']|ramltype_to_cpp }} _var_{{ param['name'] }} = static_cast<{{ param['type']|ramltype_to_cpp }}>(0);
   {% endfor %}
   {% if verb_desc['out_params']|length > 0 %}
@@ -40,6 +41,7 @@ static void {{ verb_name }}(struct afb_req request) {
   {% if verb_desc['in_params']|length > 0 %}
   json_object *val = NULL;
   {% endif %}
+  int ret = 0;
 
   AFB_NOTICE("[{{ model['api_name'] }}] Calling {{ verb_name }}");
 
@@ -55,7 +57,12 @@ static void {{ verb_name }}(struct afb_req request) {
   }
 
   {% endif %}
-  obj.{{ verb_name }}({{ list_fn_params_call_json(verb_desc, 6) }});
+  ret = obj.{{ verb_name }}({{ list_fn_params_call_json(verb_desc, 6) }});
+  if (ret) {
+    AFB_ERROR("[{{ model['api_name'] }}] Verb '{{ verb_name }}' returning error");
+    afb_req_fail_f(request, "bad-request", "Verb '{{ verb_name }}' returning error %d", ret);
+    return;
+  }
 
   {% for param in verb_desc['out_params'] %}
   new_sub_json = {{ param['type']|json_new_fn }}(_var_{{ param['name'] }});
@@ -67,6 +74,8 @@ static void {{ verb_name }}(struct afb_req request) {
   {% else %}
   afb_req_success(request, json_object_get(args), NULL);
   {% endif %}
+
+  // TODO: Put json obj
 }
 
 {% endfor %}

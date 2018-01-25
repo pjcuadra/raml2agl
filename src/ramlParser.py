@@ -44,9 +44,10 @@ def parse_root_raml(yraml, jraml):
 
         # Format the API Name
         if key == 'title':
+            jraml['class_name'] = value.title().replace(" ", "")
             jraml['service_class_name'] = "Service"
-            jraml['service_class_name'] += value.title().replace(" ", "")
-            jraml['api_name'] = value.title().replace(" ", "").lower()
+            jraml['service_class_name'] += jraml['class_name']
+            jraml['api_name'] = jraml['class_name'].lower()
             jraml[key] = value.title()
             continue
 
@@ -110,10 +111,10 @@ def parse_class_method_out_params(yraml, jraml):
             logging.warning('Response without body')
             continue
 
-        params_raml = value
+        params_raml = value['body']
 
-        if 'properties' in params_raml['body']:
-            params_raml = params_raml['body']['properties']
+        if 'properties' in params_raml:
+            params_raml = params_raml['properties']
 
         # If only param is defined
         parse_type(params_raml, jraml)

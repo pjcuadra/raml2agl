@@ -1,13 +1,14 @@
 {% include 'c-license.c' %}
 {% from 'service/macros.c' import list_fn_params %}
 
-#ifndef __RAML2AGL_SERVICE_CLASS_{{ model['service_class_name']|upper }}_H_
-#define __RAML2AGL_SERVICE_CLASS_{{ model['service_class_name']|upper }}_H_
+#ifndef __RAML2AGL_CLASS_{{ model['class_name']|upper }}_H_
+#define __RAML2AGL_CLASS_{{ model['class_name']|upper }}_H_
 
 #pragma once
 #include <cstddef>
 #include <string.h>
 #include <string>
+#include <WebSocketApi.h>
 
 extern "C"
 {
@@ -15,8 +16,11 @@ extern "C"
     #include <afb/afb-binding.h>
 };
 
-class {{ model['service_class_name'] }} {
+class {{ model['class_name'] }} : public WebSocketApi {
 public:
+
+  {{ model['class_name'] }}();
+  
   {% for verb_name, verb_desc in model['methods'].items()|sort %}
     /** Autogenrated doc for {{ verb_name }} */
     int {{ verb_name }}({{ list_fn_params(verb_desc, 8) }});
@@ -24,4 +28,4 @@ public:
   {% endfor %}
 };
 
-#endif //__RAML2AGL_SERVICE_CLASS_{{ model['service_class_name']|upper }}_H_
+#endif //__RAML2AGL_CLASS_{{ model['class_name']|upper }}_H_

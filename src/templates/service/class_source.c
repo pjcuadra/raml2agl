@@ -6,10 +6,11 @@
 {% for verb_name, verb_desc in model['methods'].items()|sort %}
 
 /** Autogenrated doc for {{ verb_name }} */
-void {{ model['service_class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }}) {
+int {{ model['service_class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }}) {
 
   AFB_NOTICE("[{{ model['service_class_name'] }}] {{ verb_name|capitalize }}");
   AFB_ERROR("Method {{ verb_name|capitalize }} not implemented");
 
+  return -1;
 }
 {% endfor %}

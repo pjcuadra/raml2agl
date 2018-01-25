@@ -1,12 +1,13 @@
 {% macro list_fn_params(method, indent=0) -%}
 {% for param in method['in_params']|sort %}
 {% if not loop.first %}{{ ' ' * indent }}{% endif %}
-const {{ param['type']|ramltype_to_cpp }} _{{ param['name']|lower }}{% if not loop.last or method['out_params']|length > 0 %},
+const {{ param['type']|ramltype_to_cpp }} in_{{ param['name']|lower }}{% if not loop.last or method['out_params']|length > 0 %},
 {% endif %}
 {% endfor %}
 {% for param in method['out_params'] %}
 {% if not loop.first or method['in_params']|length > 0 %}{{ ' ' * indent }}{% endif %}
-const {{ param['type']|ramltype_to_cpp }} &_{{ param['name']|lower }}{% if not loop.last %},
+{% if param['type'] == 'string' %}const {% endif %}
+{{ param['type']|ramltype_to_cpp }} &out_{{ param['name']|lower }}{% if not loop.last %},
 {% endif %}
 {% endfor %}
 {%- endmacro %}

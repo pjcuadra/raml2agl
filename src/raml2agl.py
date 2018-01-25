@@ -45,7 +45,7 @@ def getopts(argv):
 
 # FIXME: Add all RAML supported types
 ramltype_to_cpp_map = {"integer": "int",
-                       "string": "std::string",
+                       "string": "char *",
                        "number": "double",
                        "boolean": "json_bool",
                        "any": "void *"}
@@ -116,7 +116,7 @@ def generate_types(env, raml):
         fh.write(cont)
 
 
-def generate_api_class(env, jmodel):
+def generate_service_class(env, jmodel):
     # Create the headers and sources
     file_name = "/service/" + jmodel['service_class_name']
     header = open(headers_out_path + file_name + ".h", "w")
@@ -126,6 +126,22 @@ def generate_api_class(env, jmodel):
     header_cont = tmpl.render(model=jmodel)
 
     tmpl = env.get_template("service/class_source.c")
+    source_cont = tmpl.render(model=jmodel)
+
+    header.write(header_cont)
+    source.write(source_cont)
+
+
+def generate_app_class(env, jmodel):
+    # Create the headers and sources
+    file_name = "/app/" + jmodel['class_name']
+    header = open(headers_out_path + file_name + ".h", "w")
+    source = open(source_out_path + file_name + ".cpp", "w")
+
+    tmpl = env.get_template("app/class_header.h")
+    header_cont = tmpl.render(model=jmodel)
+
+    tmpl = env.get_template("app/class_source.c")
     source_cont = tmpl.render(model=jmodel)
 
     header.write(header_cont)
@@ -192,6 +208,7 @@ if __name__ == '__main__':
         creat_dir(headers_out_path + "/service")
 
     if gen_app:
+        creat_dir(source_out_path + "/app")
         creat_dir(headers_out_path + "/app")
 
     # Load templates
@@ -207,8 +224,9 @@ if __name__ == '__main__':
 
     jmodel = parse(model_file)
 
-    # Generate the Types
-    # generate_types(env, jy)
-    # generate_api_class(env, jy)
-    generate_agl_service(env, jmodel)
-    generate_api_class(env, jmodel)
+    if gen_service:
+        generate_agl_service(env, jmodel)
+        generate_service_class(env, jmodel)
+
+    if gen_app:
+        generate_app_class(env, jmodel)
