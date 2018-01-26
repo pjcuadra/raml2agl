@@ -22,6 +22,7 @@ from collections import OrderedDict
 media_type = ["application/json", "application/xml"]
 success_return_codes = [200, 201]
 
+resource_types = {}
 
 def filter_media_type(raml):
 
@@ -40,6 +41,9 @@ def parse_root_raml(yraml, jraml):
 
     for key, value in yraml.items():
         if isinstance(value, dict) or isinstance(value, list):
+            continue
+
+        if key == 'resourceTypes':
             continue
 
         # Format the API Name
@@ -61,6 +65,15 @@ def parse_root_raml(yraml, jraml):
     # If it doesn't have media type add JSON
     if any(x in media_type for x in jraml.keys()):
         jraml['mediaType'] = 'application/json'
+
+
+def parse_resource_types(yaml, jraml):
+    if 'resourceTypes' not in yaml:
+        return
+
+    jraml['resourceTypes']
+
+    resource_types
 
 
 def parse_type(yraml, jraml):

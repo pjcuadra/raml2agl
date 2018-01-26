@@ -1,8 +1,23 @@
 #%RAML 1.0
 title: Rover driving auto
 mediaType: application/json
+version: v1
+baseUri: localhost:8000/api?token=x
+resourceTypes:
+  key1:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              properties:
+                param1:
+                  type: number
+                param2:
+                  type: number
+
 /goforward:
-  get:
+  type: key1
 /gobackward:
   get:
 /turnright:
