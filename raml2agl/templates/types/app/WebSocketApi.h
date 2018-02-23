@@ -15,6 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef __RAML2AGL_WEB_SOCKET_API_H_
+#define __RAML2AGL_WEB_SOCKET_API_H_
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -78,3 +81,5 @@ private:
   static void wsj1_call(const char *api, const char *verb, const char *object);
 
 };
+
+#endif //__RAML2AGL_WEB_SOCKET_API_H_

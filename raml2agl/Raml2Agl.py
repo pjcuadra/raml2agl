@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from raml2agl import RamlParser as rp
 from jinja2 import Environment, FileSystemLoader
 import os
 
@@ -105,17 +105,24 @@ class Raml2Agl:
                       "w")
             fh.write(cont)
 
-    def generate_service_class(self, jmodel):
+    def generate_service_class(self):
+        if not self.input_model:
+            return
+
+        self.jmodel = {}
+
+        self.parse()
+
         # Create the headers and sources
-        file_name = "/" + jmodel['service_class_name']
+        file_name = "/" + self.jmodel['service_class_name']
         header = open(self.headers_out_path + file_name + ".h", "w")
         source = open(self.source_out_path + file_name + ".cpp", "w")
 
         tmpl = self.env.get_template("service/class_header.h")
-        header_cont = tmpl.render(model=jmodel)
+        header_cont = tmpl.render(model=self.jmodel)
 
         tmpl = self.env.get_template("service/class_source.c")
-        source_cont = tmpl.render(model=jmodel)
+        source_cont = tmpl.render(model=self.jmodel)
 
         header.write(header_cont)
         source.write(source_cont)
@@ -163,10 +170,31 @@ class Raml2Agl:
     def set_headers_out_path(self, path):
         self.headers_out_path = path
 
-    def generate_service(self, jmodel):
-        self.generate_agl_service(jmodel)
-        self.generate_service_class(jmodel)
+    def set_input_model(self, path):
+        self.input_model = path
 
-    def generate_app(self, jmodel):
-        self.generate_app_class(jmodel)
-        self.generate_app_superclass(jmodel)
+    def parse(self):
+        # Parse the model
+        parser = rp.RamlParser()
+        self.jmodel = parser.parse(self.input_model)
+
+    def generate_service(self):
+        if not self.input_model:
+            return
+
+        self.jmodel = {}
+
+        self.parse()
+
+        self.generate_agl_service(self.jmodel)
+
+    def generate_app(self):
+        if not self.input_model:
+            return
+
+        self.jmodel = {}
+
+        self.parse()
+
+        self.generate_app_class(self.jmodel)
+        self.generate_app_superclass(self.jmodel)

@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <string.h>
 #include <string>
-#include <WebSocketApi.h>
+#include <app/WebSocketApi.h>
 
 extern "C"
 {

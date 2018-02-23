@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from raml2agl import RamlParser as rp
 from raml2agl import Raml2Agl as r2g
 import os
 import yaml
@@ -34,6 +33,7 @@ if __name__ == '__main__':
     myargs = getopts(argv)
     model_file = ''
     gen_service = False
+    gen_service_class = False
     gen_app = False
     out_path = "./out"
     headers_out_path = out_path
@@ -64,6 +64,11 @@ if __name__ == '__main__':
         headers_out_path = out_path + "/service"
         source_out_path = out_path + "/service"
 
+    if '--service-class' in myargs:
+        gen_service_class = True
+        headers_out_path = out_path + "/service"
+        source_out_path = out_path + "/service"
+
     if '--app' in myargs:
         gen_app = True
         headers_out_path = out_path + "/app"
@@ -82,17 +87,17 @@ if __name__ == '__main__':
     create_dir(source_out_path)
     create_dir(headers_out_path)
 
-    # Parse the model
-    parser = rp.RamlParser()
-    jmodel = parser.parse(model_file)
-
     # Generate the output
     generator = r2g.Raml2Agl()
     generator.set_source_out_path(source_out_path)
     generator.set_headers_out_path(headers_out_path)
+    generator.set_input_model(model_file)
+
+    if gen_service_class:
+        generator.generate_service_class()
 
     if gen_service:
-        generator.generate_service(jmodel)
+        generator.generate_service()
 
     if gen_app:
-        generator.generate_app(jmodel)
+        generator.generate_app()

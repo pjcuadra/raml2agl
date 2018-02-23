@@ -28,7 +28,7 @@
 #include <systemd/sd-event.h>
 #include <json-c/json.h>
 
-#include <WebSocketApi.h>
+#include <app/WebSocketApi.h>
 
 struct afb_wsj1_itf WebSocketApi::wsj1_itf = {
    .on_hangup = WebSocketApi::on_wsj1_hangup,
