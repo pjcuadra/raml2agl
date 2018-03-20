@@ -13,13 +13,13 @@ components also shown in the corresponding diagram.
 .. uml:: deployment_raml2agl_root.uml
   :caption: Deployment Diagram of RAML2AGL Root
   :align: center
-  :scale: 30
+  :scale: 80
 
 .. _r_deployment_raml2agl_root_templates:
 .. uml:: deployment_raml2agl_root_templates.uml
   :caption: Deployment Diagram of RAML2AGL Root (With Templates)
   :align: center
-  :scale: 30
+  :scale: 80
 
 Moreover, the Application and Service source files are separately compiled
 and deployed at different abstraction layers within the AGL architecture.

@@ -11,7 +11,7 @@ have to be presented. :numref:`r_block_web_socket` presents these components.
 .. uml:: block_web_socket.uml
   :caption: Web Socket Communication Component Diagram
   :align: center
-  :scale: 50
+  :scale: 70
 
 Since the *AGL Application Framework* and its API are already given in the
 AGL architecture, the rationale behind the design was to wrap the
@@ -145,7 +145,7 @@ Service Class
 .. uml:: block_generated_example.uml
   :caption: Generated Example
   :align: center
-  :scale: 50
+  :scale: 70
 
 Note that *Service Class* isn't fully automatic generated. Nevertheless, a
 skeleton of the entire class with all the methods definition is generated. Is
@@ -165,7 +165,7 @@ WebSocketApi
 .. uml:: block_web_socket_api.uml
   :caption: Web Socket API Class Diagram
   :align: center
-  :scale: 50
+  :scale: 70
 
 Moreover, below the description of each of the classes members.
 
@@ -195,7 +195,7 @@ An AGL service is basically the implementation of the
 .. uml:: block_af_api.uml
   :caption: AGL Application Framework API :cite:`docs_bindings_reference`
   :align: center
-  :scale: 50
+  :scale: 70
 
 
 Furthermore, to implement :numref:`r_block_generated_example`, for instance,
@@ -241,7 +241,7 @@ Furthermore, the responsibilities of each of the sub-components are stated in
 .. uml:: block_parser.uml
   :caption: RAML Parser Block Diagram
   :align: center
-  :scale: 50
+  :scale: 70
 
 .. _r_t_block_raml_parser_resp:
 .. table:: RAML2 Parser Sub-components Responsibilities

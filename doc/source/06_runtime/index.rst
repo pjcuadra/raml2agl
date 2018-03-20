@@ -14,7 +14,7 @@ run for automatically generate *APP Class*, *WebSocketApi*, *AGL Service* and
 .. uml:: run_time_raml2agl_gen.uml
   :caption: RAML2AGL Generation
   :align: center
-  :scale: 50
+  :scale: 70
 
 
 AGL Service Start
@@ -28,7 +28,7 @@ how the *Unix Web Socket* gets created. Therefore,
 .. uml:: run_time_service_start.uml
   :caption: AGL Service Start
   :align: center
-  :scale: 50
+  :scale: 70
 
 
 Web Socket Communication
@@ -43,7 +43,7 @@ entire communication takes place.
 .. uml:: run_time_web_socket.uml
   :caption: Web Socket Communication
   :align: center
-  :scale: 40
+  :scale: 70
 
 Note that the *Application* using the *APP Class* will have the entire Web
 Socket communication abstracted as simple method calls. Hence, an RPC model
@@ -54,7 +54,7 @@ shows this abstracted communication sequence.
 .. uml:: run_time_web_socket_2.uml
   :caption: Web Socket Communication
   :align: center
-  :scale: 50
+  :scale: 70
 
 .. only:: html
 

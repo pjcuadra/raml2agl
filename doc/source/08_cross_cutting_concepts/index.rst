@@ -18,13 +18,13 @@ RPC.
 .. uml:: concepts_rpc.uml
   :caption: RPC Model
   :align: center
-  :scale: 40
+  :scale: 80
 
 .. _r_concepts_ws:
 .. uml:: concepts_ws.uml
   :caption: Web Socket Model
   :align: center
-  :scale: 40
+  :scale: 80
 
 
 .. only:: html
