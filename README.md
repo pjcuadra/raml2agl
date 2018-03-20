@@ -4,6 +4,11 @@ This is a Proof of Concept of a Model Driven Development approach to generate
 Automotive Grade Linux applications and services by defining their interfaces
 using RAML.
 
+## Architectural Design
+
+The architectural design documentation can be reviewed,
+[here](http://raml2agl.readthedocs.io).
+
 ## Usage
 
 ```
