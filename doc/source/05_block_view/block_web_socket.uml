@@ -1,0 +1,39 @@
+@startuml
+
+  interface "Unix Web Socket" as ws
+
+  package "AGL" {
+    component "AGL Applications Framework" as af
+      interface "Application Framework API" as af_api
+  }
+
+
+  package "Service" {
+    component "AGL Service" as service
+    component "Service Class" as service_class
+
+    interface "Service Class" as i_service_class
+
+    service .up.> af_api : use
+    service .down.> i_service_class : use
+
+    af -down- af_api
+    i_service_class -down- service_class
+  }
+
+  package "Application" {
+    component "APP Class" as app_class
+    component "Application" as app
+    component "WebSocketApi" as wsapi
+    interface "APP Class" as i_app_class
+
+    app .down.> i_app_class : use
+    app_class -up- i_app_class
+
+    app_class -down-|> wsapi
+  }
+
+  service -right-> ws
+  app_class .right. ws : use
+
+@enduml

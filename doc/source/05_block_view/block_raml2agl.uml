@@ -1,0 +1,32 @@
+@startuml
+component "RAML Model" as model
+interface "RAML" as raml
+
+package "RAML2AGL" {
+  component "RAML Parser" as parser
+  component "raml2agl main" as main
+  interface "JSON Model" as jmodel
+  interface "Templates Engine" as jinja_tmp
+  component "Jinja2 Environment" as jinja_env
+
+  parser -left- raml
+  parser -down- jmodel
+  main .up.> jmodel : use
+  main .down.> jinja_tmp : use
+  jinja_env -up- jinja_tmp
+}
+
+package "Service" {
+  component "AGL Service" as service
+  component "Service Class" as service_class
+}
+
+package "Application" {
+  component "APP Class" as app_class
+}
+
+model -right- raml
+main -right-> service : <<generate>> 
+main -right-> app_class : <<generate>>
+main -right-> service_class : <<partially generate>>
+@enduml

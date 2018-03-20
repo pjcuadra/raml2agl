@@ -1,0 +1,31 @@
+@startuml
+
+  interface RAML as raml
+  interface JSON as json
+
+  package "RAML Parser" {
+
+    component "Root Attributes Parser" as root_parser
+    component "Methods Parser" as method_parser
+
+    package "Parameters Parser" {
+      component "Input Parameters Parser" as input_params
+      component "Output Parameters Parser" as output_params
+      component "Types Parser" as type_parser
+
+      input_params <-down-> type_parser : <<flow>> RAML, JSON
+      output_params <-down-> type_parser : <<flow>> RAML, JSON
+
+    }
+
+    method_parser <-down-> input_params : <<flow>> RAML, JSON
+    method_parser <-down-> output_params : <<flow>> RAML, JSON
+
+    root_parser <-down-> method_parser : <<flow>> RAML, JSON
+  }
+
+  raml -right-> root_parser : <<flow>> RAML
+
+  root_parser -right-> json : <<flow>> JSON
+
+@enduml

@@ -1,0 +1,59 @@
+@startuml
+  participant raml2agl
+  participant "RAML Model" as model
+  participant "Jinja 2 Templates Engine" as jinja
+  participant "Filesystem" as fs
+
+
+  activate raml2agl
+
+  raml2agl --> model : Read RAML model
+  raml2agl --> raml2agl: RAML to JSON model
+
+  raml2agl --> jinja : Load templates
+
+  ...
+
+  alt "--service"
+
+  == Generate AGL Service ==
+
+  raml2agl -> jinja : Get AGL Service template
+  jinja --> raml2agl
+
+  raml2agl -> jinja : Render AGL Service template
+  jinja --> raml2agl
+
+  raml2agl --> fs : Write generated AGL Service (*.cpp)
+
+  == Generate Service Class ==
+
+  raml2agl -> jinja : Get Service Class template
+  jinja --> raml2agl
+
+  raml2agl -> jinja : Render Service Class template
+  jinja --> raml2agl
+
+  raml2agl --> fs : Write generated Service Class (*.cpp and *.h)
+
+  else "--app"
+
+  == Generate APP Class ==
+
+  raml2agl -> jinja : Get APP Class template
+  jinja --> raml2agl
+
+  raml2agl -> jinja : Render APP Class template
+  jinja --> raml2agl
+
+  raml2agl --> fs : Write generated APP Class (*.cpp and *.h)
+  raml2agl --> fs : Copy WebSocketApi.cpp and WebSocketApi.h
+
+  end
+
+  alt "-v"
+  raml2agl --> raml2agl : Print JSON Model
+  end
+
+  deactivate raml2agl
+@enduml

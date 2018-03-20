@@ -1,0 +1,12 @@
+@startuml
+
+  activate Client
+  Client -> Server : request
+  deactivate Client
+  activate Server
+
+  Server -> Client : reply
+  deactivate Server
+  activate Client
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+
+  node "Development Platform" {
+    node "AGL" {
+      rectangle "App/HMI" as app_layer {
+        component "APP Class" as c_app_class
+        component "WebSocketApi" as c_ws
+      }
+
+      rectangle "Services" as services_layer {
+        component "Service Class" as c_service_class
+        component "AGL Service" as c_agl_service
+      }
+
+       app_layer -(0-  services_layer
+
+
+    }
+  }
+
+@enduml

@@ -1,0 +1,47 @@
+@startuml
+
+  folder "RAML2AGL Root Directory" {
+
+    folder "src" {
+
+      folder "templates" {
+        folder "types/app" {
+          artifact "WebSocketApi.cpp" as ws_c
+          artifact "WebSocketApi.h" as ws_h
+        }
+
+        folder "app" {
+          artifact "class_header.h (APP)" as app_class_h
+          artifact "class_source.c (APP)" as app_class_c
+        }
+
+        folder "service" {
+          artifact "class_header.h (Service)" as service_class_h
+          artifact "class_source.c (Service)" as service_class_c
+          artifact "agl_service.c" as agl_service
+          artifact "macros.c"
+        }
+      }
+    }
+  }
+
+  component "APP Class" as c_app_class
+  component "Service Class" as c_service_class
+  component "WebSocketApi" as c_ws
+  component "AGL Service" as c_agl_service
+
+
+  app_class_h .down.> c_app_class : <<manifest>>
+  app_class_c .down.> c_app_class : <<manifest>>
+
+  service_class_h .down.> c_service_class : <<manifest>>
+  service_class_c .down.> c_service_class : <<manifest>>
+
+  ws_h .down.> c_ws : <<manifest>>
+  ws_c .down.> c_ws : <<manifest>>
+
+
+  agl_service .down.> c_agl_service : <<manifest>>
+
+
+@enduml

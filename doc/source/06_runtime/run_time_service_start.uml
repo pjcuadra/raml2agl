@@ -1,0 +1,25 @@
+@startuml
+  actor Systemd
+  participant "AGL App Framework" as af
+  participant "AGL Service" as service
+  participant "Unix Web Socket" as ws
+
+  ... On System Start Up ...
+
+  Systemd --> af : Start
+
+  activate af
+
+  af -> af : Start services
+  activate af
+
+  af --> ws : <<create>> With service's API Name
+  activate ws
+
+  af --> service : Start service
+  activate service
+
+  service --> ws : Listen
+
+  ...
+@enduml

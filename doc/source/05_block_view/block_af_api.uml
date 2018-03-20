@@ -1,0 +1,26 @@
+@startuml
+  class afb_auth << (S,#FF7700) >> {
+  }
+
+  class afb_verb_v2 << (S,#FF7700) >> {
+    verb: const char *
+    (*callback)(req: struct afb_req): void
+    auth: const struct afb_auth *
+    info: const char *
+    session: uint32_t
+  }
+
+  class afb_binding_v2 << (S,#FF7700) >> {
+    api: const char *
+    specification: const char *
+    info: const char *
+    verbs: const struct afb_verb_v2 *
+    (*preinit)(): int
+    (*init)(): int
+    (*onevent)(event: const char *, object: struct json_object *): void
+    noconcurrency: unsigned
+  }
+
+  afb_binding_v2 --* afb_verb_v2 : use
+  afb_verb_v2 --* afb_auth : use
+@enduml

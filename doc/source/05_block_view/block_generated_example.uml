@@ -1,0 +1,23 @@
+@startuml
+
+  class WebSocketApi {
+  }
+
+  class "Example" <<APP Class>> {
+    method_1(param_in_1: const int, param_out_1: int &): int
+    method_2(param_in_1: const char *, param_out_1: const char *): int
+  }
+
+  class "ServiceExample" <<Service Class>> {
+    method_1(param_in_1: const int, param_out_1: int &): int
+    method_2(param_in_1: const char *, param_out_1: const char *): int
+  }
+
+  "Example" -up-|> WebSocketApi
+  "Example" .. "ServiceExample": linked over unix web socket
+
+  hide members
+  show "Example" methods
+  show "ServiceExample" methods
+
+@enduml

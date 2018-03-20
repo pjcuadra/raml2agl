@@ -1,0 +1,21 @@
+@startuml
+
+  folder "RAML2AGL Root Directory" {
+
+    folder "src" {
+      artifact "raml2agl.py" as raml2agl
+      artifact "ramlParser.py" as raml_parser
+
+      folder "templates" {
+
+      }
+    }
+  }
+
+  component "RAML Parser" as c_raml_parser
+  component "raml2agl Main" as c_raml2agl
+
+  raml_parser .down.> c_raml_parser : <<manifest>>
+  raml2agl .down.> c_raml2agl : <<manifest>>
+
+@enduml

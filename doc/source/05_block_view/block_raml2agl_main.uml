@@ -1,0 +1,29 @@
+@startuml
+
+  interface "JSON model" as json
+  interface "Template Engine" as tmpl
+  interface "Command Line" as cmd
+  interface "Filesystem" as fs
+
+  package "raml2agl main" {
+
+    component "Templates Filters" as filters
+    component "Command Line Arguments Parser" as parser
+    component "Files Generator" as gen
+
+    parser --> gen : Configures
+
+    cmd --> parser
+
+    gen -down-> fs : Write files
+
+
+  }
+
+  json -right-> gen
+
+  filters .right.> tmpl
+  gen .right.> tmpl : use
+
+
+@enduml

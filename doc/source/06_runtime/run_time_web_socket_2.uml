@@ -1,0 +1,29 @@
+@startuml
+  actor User as user
+  participant APP as app
+  participant "APP Class" as app_class
+
+  user --> app : Start APP
+
+  activate app
+
+  app --> app_class : <<create>>
+
+  activate app_class
+
+  ...
+
+  app -> app_class : 'APP Class'.method(params)
+
+  app_class --> app
+
+  ...
+
+  user --> app : Stop APP
+
+  app --> app_class : <<destroy>>
+
+  deactivate app_class
+
+  deactivate app
+@enduml

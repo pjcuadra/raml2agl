@@ -1,0 +1,16 @@
+@startuml
+  component "AGL Application Framework" as agl_af
+  component "AGL Linux Distribution" as agl
+  actor "Service/Application Developer" as dev
+  actor "Application user" as user
+  component "MDD Approach" as mdd
+  component "Model" as model
+
+  user .right.> mdd : <<flow>>
+  dev .right.> mdd : <<flow>>
+
+  model .down.> mdd : <<flow>> metadata
+
+  mdd .down.> agl_af : <<flow>>
+  mdd .down.> agl : <<flow>>
+@enduml

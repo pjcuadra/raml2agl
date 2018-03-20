@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.15">
+  <compound refid="classWebSocketApi" kind="class"><name>WebSocketApi</name>
+    <member refid="classWebSocketApi_1a1ad3d173b0269af339ca492809c33770" kind="variable"><name>connected</name></member>
+    <member refid="classWebSocketApi_1a48af5e162db036e35c2b17b2f4afc2be" kind="variable"><name>wsj1_itf</name></member>
+    <member refid="classWebSocketApi_1a0bf4321ab9d3a76550e8184c0f69579b" kind="variable"><name>wsj1</name></member>
+    <member refid="classWebSocketApi_1ad6d7123eec99d5f7f73a613fb208438e" kind="variable"><name>exonrep</name></member>
+    <member refid="classWebSocketApi_1a9a2ad40ec0afe20fad23a237e26de044" kind="variable"><name>callcount</name></member>
+    <member refid="classWebSocketApi_1a06931f6a7c854f31ddce03a2620b43f0" kind="variable"><name>loop</name></member>
+    <member refid="classWebSocketApi_1a51fd6c2dbc2aca33ff66a08b406cfbc7" kind="variable"><name>reply</name></member>
+    <member refid="classWebSocketApi_1ab19428dd830f4b2ec2bac923f7796a2b" kind="variable"><name>curr_reply</name></member>
+    <member refid="classWebSocketApi_1a7b25a00fe45e9c2875c06047f964a8a8" kind="variable"><name>uri</name></member>
+    <member refid="classWebSocketApi_1ab3d6468e5cd9dadeb27740c9ca090414" kind="variable"><name>api_name</name></member>
+    <member refid="classWebSocketApi_1adf9d8d40b62252791fdcb4149836a21d" kind="function"><name>WebSocketApi</name></member>
+    <member refid="classWebSocketApi_1a7c77df9759eb8d46f502969b3c677bb7" kind="function"><name>~WebSocketApi</name></member>
+    <member refid="classWebSocketApi_1a3792b8e604509495788ba4c38b2c8176" kind="function"><name>emit</name></member>
+    <member refid="classWebSocketApi_1a1a501a9431183df1a281cdd2b67b194f" kind="function"><name>dec_callcount</name></member>
+    <member refid="classWebSocketApi_1a21f795515606947e51315733e16ee05e" kind="function"><name>on_wsj1_hangup</name></member>
+    <member refid="classWebSocketApi_1a8a906e145fa4595c2c0e8854f8209220" kind="function"><name>on_wsj1_call</name></member>
+    <member refid="classWebSocketApi_1a68ab58f44df07a54b3cb05a3e83cdb0d" kind="function"><name>on_wsj1_event</name></member>
+    <member refid="classWebSocketApi_1a60d91bd105adb42cd07f73ec17f5edd5" kind="function"><name>on_wsj1_reply</name></member>
+    <member refid="classWebSocketApi_1ac29a004fa77a6cf6a14c9a9f4588759e" kind="function"><name>wsj1_call</name></member>
+  </compound>
+  <compound refid="WebSocketApi_8h" kind="file"><name>WebSocketApi.h</name>
+  </compound>
+</doxygenindex>

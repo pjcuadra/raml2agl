@@ -1,0 +1,24 @@
+@startuml
+  class WebSocketApi {
+    -{static} wsj1_itf: struct afb_wsj1_itf
+    -{static} wsj1: struct afb_wsj1 *
+    -{static} exonrep: int
+    -{static} callcount: int
+    -{static} loop: sd_event *
+    -{static} reply: bool
+    -{static} curr_reply: json_object *
+    -uri: const char *
+    -api_name: const char *
+    #connected: bool
+
+    +WebSocketApi(uri: const char *, api_name: const char * )
+    +~WebSocketApi()
+    #emit(verb: const char *, object: const char *): json_object *
+    -{static} dec_callcount(): void
+    -{static} on_wsj1_hangup(closure: void *, wsj1: struct afb_wsj1 *): void
+    -{static} on_wsj1_call(closure: void *, api: const char *, verb: const char *, msg: struct afb_wsj1_msg *): void
+    -{static} on_wsj1_event(closure: void *, event: const char *, msg: struct afb_wsj1_msg *): void
+    -{static} on_wsj1_reply(closure: void *, msg: struct afb_wsj1_msg *): void
+    -{static} wsj1_call(api: const char *, verb: const char *, object: const char *): int
+  }
+@enduml

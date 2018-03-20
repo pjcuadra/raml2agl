@@ -1,0 +1,74 @@
+@startuml
+  actor User as user
+  participant APP as app
+  participant "APP Class" as app_class
+  participant "Unix Web Socket" as ws
+  participant "AGL Service" as service
+  participant "Service Class" as service_class
+
+  activate service
+  activate ws
+
+  user --> app : Start APP
+
+  activate app
+
+  app --> app_class : <<create>>
+
+  activate app_class
+
+  app_class -> ws : Connect \\nto 'api_name' \\nWeb Socket
+  ws -> app_class
+
+  activate app_class
+
+  ...
+
+  app -> app_class : 'APP Class'.method(params)
+  app_class -> app_class : Marshal params \\nas JSON
+
+  app_class --> ws : Request \\nverb=method \\nwith JSON
+
+  app_class -> app_class : Start wait loop
+  activate app_class
+
+  ws --> service : Request \\nverb=method \\nwith JSON
+
+  service -> service : Call verb's callback
+  activate service
+
+  service --> service : Unmarshal \\nJSON \\ninto params
+
+  service -> service_class : 'Service Class'.method(params)
+  activate service_class
+  service_class -> service
+  deactivate service_class
+
+  service --> service : Marshal \\nresulting \\nparams as JSON
+
+  service --> ws : Reply with JSON
+  deactivate service
+
+  ws --> app_class : Reply with JSON
+
+  deactivate app_class
+
+  ws --> app_class : Unmarshal \\nJSON \\ninto vars
+  app_class --> app_class : Update params \\nwith vars
+
+  app_class --> app
+
+  ...
+
+  user --> app : Stop APP
+
+  app --> app_class : <<destroy>>
+
+  app_class -> ws : Disconnect
+  ws -> app_class
+
+  deactivate app_class
+  deactivate app_class
+
+  deactivate app
+@enduml

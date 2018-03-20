@@ -1,0 +1,2 @@
+doc/source/_static/references.bib filter=lfs diff=lfs merge=lfs -text
+doc/source/_static/src filter=lfs diff=lfs merge=lfs -text

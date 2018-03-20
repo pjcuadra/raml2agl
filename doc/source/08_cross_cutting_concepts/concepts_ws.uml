@@ -1,0 +1,16 @@
+@startuml
+
+  activate Client
+  activate Server
+  Client -> Server : Handshake
+  Server -> Client
+
+  Client <-> Server : Message Exchange
+
+  alt
+  Client -> Server : Close Connection
+  else
+  Server -> Client : Close Connection
+  end
+
+@enduml
