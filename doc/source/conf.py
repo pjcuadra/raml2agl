@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# This file is execfile() with the current directory set to its
+# Model Driven Development for Kuksa Applications documentation build
+# configuration file, created by sphinx-quickstart on Wed Jan 10 15:17:00 2018.
+#
+# This file is execfile()d with the current directory set to its
 # containing dir.
 #
 # Note that not all possible configuration values are present in this
@@ -10,7 +13,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-# import sys
+import sys
 import os
 
 import sphinx_rtd_theme
@@ -46,6 +49,21 @@ breathe_default_project = "raml2agl"
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+# PYTHONPATH = docs/source
+DOC_SOURCES_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT_DIR = os.path.dirname(os.path.dirname(DOC_SOURCES_DIR))
+sys.path.insert(0, DOC_SOURCES_DIR)
+print('PROJECT_ROOT_DIR', PROJECT_ROOT_DIR)
+
+# If runs on ReadTheDocs environment
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+# Hack for lacking git-lfs support ReadTheDocs
+if on_rtd:
+    print('Fetching files with git_lfs')
+    from git_lfs import fetch
+    fetch(PROJECT_ROOT_DIR)
+
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 # source_suffix = ['.rst', '.md']
@@ -58,7 +76,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'RAML 2 AGL'
+project = 'Model Driven Development for Kuksa Applications'
 copyright = '2018, Pedro Cuadra'
 author = 'Pedro Cuadra'
 
@@ -221,7 +239,7 @@ html_static_path = ['_static']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'raml2agldoc'
+htmlhelp_basename = 'MDDforKuksaApplicationsdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -242,7 +260,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'raml2agl.tex', 'RAML 2 AGL',
+    (master_doc, 'MDDforKuksaApplications.tex', 'Model Driven Development for '
+     'Kuksa Applications Documentation',
      'Pedro Cuadra', 'manual'),
 ]
 
@@ -272,7 +291,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'raml2agl', 'RAML 2 AGL',
+    (master_doc, 'mddforkuksaapplications', 'Model Driven Development for '
+     'Kuksa Applications Documentation',
      [author], 1)
 ]
 
@@ -286,8 +306,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'raml2agl', 'RAML 2 AGL',
-     author, 'Pedro Cuadra', 'One line description of project.',
+    (master_doc, 'MDDforKuksaApplications', 'Model Driven Development for '
+     'Kuksa Applications Documentation',
+     author, 'MDDforKuksaApplications', 'One line description of project.',
      'Miscellaneous'),
 ]
 
