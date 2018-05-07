@@ -19,6 +19,8 @@ class {{ model['service_class_name'] }} {
 public:
   {{ model['service_class_name'] }}();
 
+  int init();
+
   {% for verb_name, verb_desc in model['methods'].items()|sort %}
     /** Autogenrated doc for {{ verb_name }} */
     int {{ verb_name }}({{ list_fn_params(verb_desc, 8) }});

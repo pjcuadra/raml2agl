@@ -21,10 +21,11 @@ static {{ model['service_class_name'] }} obj;
 
 static int init()
 {
+  int rc = 0;
 	AFB_NOTICE("Initializing... ");
-  // Do something
+  rc = obj.init();
 	AFB_NOTICE("Initialization done!");
-	return 0;
+	return rc;
 }
 
 {% for verb_name, verb_desc in model['methods'].items() %}

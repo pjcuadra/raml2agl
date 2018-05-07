@@ -7,6 +7,11 @@
   AFB_NOTICE("[{{ model['service_class_name'] }}] Constructor ");
 }
 
+int {{ model['service_class_name'] }}::init() {
+  AFB_NOTICE("[{{ model['service_class_name'] }}] Init ");
+  return -1;
+}
+
 {% for verb_name, verb_desc in model['methods'].items()|sort %}
 
 /** Autogenrated doc for {{ verb_name }} */

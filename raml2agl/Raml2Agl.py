@@ -14,6 +14,7 @@
 from raml2agl import RamlParser as rp
 from jinja2 import Environment, FileSystemLoader
 import os
+import codecs
 
 # FIXME: Add all RAML supported types
 ramltype_to_cpp_map = {"integer": "int",
@@ -82,7 +83,7 @@ class Raml2Agl:
         self.env.filters.update(filters)
 
     def generate_types(self, raml):
-        fh = open(self.headers_out_path + "/all_types.h", "w")
+        fh = codecs.open(self.headers_out_path + "/all_types.h", "w")
 
         tmpl = self.env.get_template("all_types_header.h")
 
@@ -101,9 +102,30 @@ class Raml2Agl:
                                type_name=type_name,
                                all_types=raml['types'])
 
-            fh = open(self.headers_out_path + "/types/" + type_name + ".h",
-                      "w")
+            path = os.path.join(self.headers_out_path, "types")
+            fh = codecs.open(path + type_name + ".h",
+                             "w")
             fh.write(cont)
+
+    def check_service_class_exist(self):
+        if not self.input_model:
+            return
+
+        ret = False
+
+        self.jmodel = {}
+
+        self.parse()
+
+        # Create the headers and sources
+        file_name = "/" + self.jmodel['service_class_name']
+        header = self.headers_out_path + file_name + ".h"
+        source = self.source_out_path + file_name + ".cpp"
+
+        ret |= os.path.exists(header)
+        ret |= os.path.exists(source)
+
+        return ret
 
     def generate_service_class(self):
         if not self.input_model:
@@ -115,8 +137,8 @@ class Raml2Agl:
 
         # Create the headers and sources
         file_name = "/" + self.jmodel['service_class_name']
-        header = open(self.headers_out_path + file_name + ".h", "w")
-        source = open(self.source_out_path + file_name + ".cpp", "w")
+        header = codecs.open(self.headers_out_path + file_name + ".h", "w")
+        source = codecs.open(self.source_out_path + file_name + ".cpp", "w")
 
         tmpl = self.env.get_template("service/class_header.h")
         header_cont = tmpl.render(model=self.jmodel)
@@ -130,8 +152,8 @@ class Raml2Agl:
     def generate_app_class(self, jmodel):
         # Create the headers and sources
         file_name = "/" + jmodel['class_name']
-        header = open(self.headers_out_path + file_name + ".h", "w")
-        source = open(self.source_out_path + file_name + ".cpp", "w")
+        header = codecs.open(self.headers_out_path + file_name + ".h", "w")
+        source = codecs.open(self.source_out_path + file_name + ".cpp", "w")
 
         tmpl = self.env.get_template("app/class_header.h")
         header_cont = tmpl.render(model=jmodel)
@@ -144,8 +166,12 @@ class Raml2Agl:
 
     def generate_app_superclass(self, jmodel):
         # Create the headers and sources
-        header = open(self.headers_out_path + "/" + "WebSocketApi.h", "w")
-        source = open(self.source_out_path + "/" + "WebSocketApi.cpp", "w")
+        header = codecs.open(self.headers_out_path + "/" + "WebSocketApi.h",
+                             "w",
+                             "utf-8")
+        source = codecs.open(self.source_out_path + "/" + "WebSocketApi.cpp",
+                             "w",
+                             "utf-8")
 
         tmpl = self.env.get_template("types/app/WebSocketApi.h")
         header_cont = tmpl.render(model=jmodel)
@@ -157,8 +183,8 @@ class Raml2Agl:
         source.write(source_cont)
 
     def generate_agl_service(self, jmodel):
-        source = open(self.source_out_path + "/" + jmodel['api_name'] +
-                      "-binding-auto.cpp", "w")
+        source = codecs.open(self.source_out_path + "/" + jmodel['api_name'] +
+                             "-binding-auto.cpp", "w")
         tmpl = self.env.get_template("service/agl_service.c")
         source_cont = tmpl.render(model=jmodel)
 
