@@ -19,7 +19,7 @@
 {% for verb_name, verb_desc in model['methods'].items()|sort %}
 
 /** Autogenrated doc for {{ verb_name }} */
-int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }}) {
+int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, maps, 4) }}) {
   json_object * rec = NULL;
   json_object * req = NULL;
   {% if verb_desc['in_params']|length > 0 %}
@@ -38,7 +38,7 @@ int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }
   req =  json_object_new_object();
   {% endif %}
   {% for param in verb_desc['in_params'] %}
-  new_sub_json = {{ param['type']|json_new_fn }}(in_{{ param['name'] }});
+  new_sub_json = {{ maps['type_to_json_new_fn'][param['type']] }}(in_{{ param['name'] }});
   json_object_object_add(req, "{{ param['name'] }}", new_sub_json);
   {% endfor %}
   {% if verb_desc['in_params']|length > 0 %}
@@ -66,7 +66,7 @@ int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, 4) }
 
   {% for param in verb_desc['out_params'] %}
   rc = json_object_object_get_ex(response, "{{ param['name'] }}", &val);
-  out_{{ param['name'] }} = rc ? {{ param['type']|json_get_fn }}(val) : static_cast<{{ param['type']|ramltype_to_cpp }}>(0);
+  out_{{ param['name'] }} = rc ? {{ maps['type_to_json_get_fn'][param['type']] }}(val) : static_cast<{{ maps['type_to_cpp'][param['type']] }}>(0);
   {% if param['type'] == 'string' %}
   out_{{ param['name'] }} = strdup(out_{{ param['name'] }});
   {% endif %}

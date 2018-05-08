@@ -21,7 +21,7 @@ from collections import OrderedDict
 
 media_type = ["application/json", "application/xml"]
 success_return_codes = [200, 201]
-
+supported_types = ["enum"]
 resource_types = {}
 
 
@@ -30,8 +30,7 @@ class RamlParser:
     def filter_media_type(self, raml):
 
         for key, value in raml.items():
-
-            if isinstance(value, dict) or isinstance(value, list):
+            if isinstance(value, dict):
                 for x in value.keys():
                     if x in media_type:
                         value = value[x]
@@ -39,7 +38,41 @@ class RamlParser:
 
                 value = self.filter_media_type(value)
 
+    def parse_single_custom_type(self, yaml, json):
+        json['def'] = yaml
+
+        if 'enum' in yaml:
+            json['type'] = 'enum'
+            json['enum_vals'] = yaml['enum']
+
+            return
+
+        if 'type' not in yaml:
+            json['type'] = 'unknown'
+            return
+
+        if yaml['type'] not in supported_types:
+            json['type'] = 'unsupported_type'
+            return
+
+        json['type'] = yaml['type']
+
+    def parse_custom_types(self):
+        self.jraml["types"] = dict()
+
+        if 'types' not in self.yraml:
+            return
+
+        logging.info(self.yraml["types"])
+
+        for key, value in self.yraml["types"].items():
+            tmp = {'name': key}
+            self.parse_single_custom_type(value, tmp)
+            self.jraml["types"][key] = tmp
+
     def parse_root_raml(self):
+
+        logging.info(self.yraml)
 
         for key, value in self.yraml.items():
             if isinstance(value, dict) or isinstance(value, list):
@@ -79,7 +112,6 @@ class RamlParser:
     def parse_type(self, yaml, json):
         if 'type' in yaml:
             json.append({'type': yaml['type'], 'name': 'default'})
-
             return
 
         tmp_yraml = OrderedDict(sorted(yaml.items()))
@@ -187,6 +219,8 @@ class RamlParser:
         self.parse_root_raml()
 
         self.parse_class_methods()
+
+        self.parse_custom_types()
 
         logging.info('JSON Model - ' + json.dumps(self.jraml,
                                                   sort_keys=True, indent=4))
