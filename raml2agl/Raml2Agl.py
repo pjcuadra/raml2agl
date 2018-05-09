@@ -21,7 +21,7 @@ import logging
 type_to_cpp_map = {"integer": "int",
                    "string": "char *",
                    "number": "double",
-                   "boolean": "json_bool",
+                   "boolean": "bool",
                    "any": "void *"}
 
 type_to_json_new_fn_map = {"integer": "json_object_new_int",
@@ -67,30 +67,26 @@ class Raml2Agl:
 
         self.env.filters.update(filters)
 
-    def generate_types(self, raml):
-        fh = codecs.open(self.headers_out_path + "/all_types.h", "w")
+    def generate_types(self):
+        fh = codecs.open(self.headers_out_path + "/types.h", "w")
 
         tmpl = self.env.get_template("all_types_header.h")
 
-        if 'types' not in raml:
-            cont = tmpl.render(all_types=None)
-            fh.write(cont)
-            return
-        else:
-            cont = tmpl.render(all_types=raml['types'])
-            fh.write(cont)
+        cont = tmpl.render(all_types=self.jmodel['types'])
+        fh.write(cont)
 
-        tmpl = self.env.get_template("types_header.h")
-        # Gen the types classes
-        for type_name, type_def in raml['types'].items():
-            cont = tmpl.render(this_type=type_def,
-                               type_name=type_name,
-                               all_types=raml['types'])
-
-            path = os.path.join(self.headers_out_path, "types")
-            fh = codecs.open(path + type_name + ".h",
-                             "w")
-            fh.write(cont)
+        # TODO: Implement Objects headers generation
+        # tmpl = self.env.get_template("types_header.h")
+        # # Gen the types classes
+        # for type_name, type_def in raml['types'].items():
+        #     cont = tmpl.render(this_type=type_def,
+        #                        type_name=type_name,
+        #                        all_types=raml['types'])
+        #
+        #     path = os.path.join(self.headers_out_path, "types")
+        #     fh = codecs.open(path + type_name + ".h",
+        #                      "w")
+        #     fh.write(cont)
 
     def check_service_class_exist(self):
         if not self.input_model:
@@ -223,3 +219,4 @@ class Raml2Agl:
 
         self.generate_app_class(self.jmodel)
         self.generate_app_superclass(self.jmodel)
+        self.generate_types()

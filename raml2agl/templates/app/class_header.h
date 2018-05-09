@@ -1,6 +1,5 @@
 {% include 'c-license.c' %}
 {% from 'service/macros.c' import list_fn_params %}
-{% from 'service/macros.c' import define_type %}
 
 #ifndef __RAML2AGL_CLASS_{{ model['class_name']|upper }}_H_
 #define __RAML2AGL_CLASS_{{ model['class_name']|upper }}_H_
@@ -9,6 +8,7 @@
 #include <cstddef>
 #include <string.h>
 #include <string>
+#include <app/types.h>
 #include <app/WebSocketApi.h>
 
 extern "C"
@@ -16,8 +16,6 @@ extern "C"
     #define AFB_BINDING_VERSION 2
     #include <afb/afb-binding.h>
 };
-
-{% for key, type in model['types'].items()|sort %}{{ define_type(type) }}{% endfor %}
 
 class {{ model['class_name'] }} : public WebSocketApi {
 public:
