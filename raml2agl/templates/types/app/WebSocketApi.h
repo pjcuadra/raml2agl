@@ -54,16 +54,12 @@ private:
   static struct afb_wsj1 *wsj1;
 
   static int exonrep;
-  static int callcount;
+  int callcount;
   static sd_event *loop;
-  static bool reply;
+  bool reply;
   const char * uri;
   const char * api_name;
-  static json_object * curr_reply;
-
-
-  /* decrement the count of calls */
-  static void dec_callcount();
+  json_object * curr_reply;
 
   /* called when wsj1 hangsup */
   static void on_wsj1_hangup(void *closure, struct afb_wsj1 *wsj1);
@@ -78,7 +74,11 @@ private:
   static void on_wsj1_reply(void *closure, struct afb_wsj1_msg *msg);
 
   /* makes a call */
-  static void wsj1_call(const char *api, const char *verb, const char *object);
+  void wsj1_call(const char *api, const char *verb, const char *object);
+
+  /* decrement the count of calls */
+  void dec_callcount();
+
 
 };
 

@@ -37,14 +37,15 @@ struct afb_wsj1_itf WebSocketApi::wsj1_itf = {
 };
 
 int WebSocketApi::exonrep = 0;
-int WebSocketApi::callcount = 0;
 sd_event * WebSocketApi::loop = NULL;
 struct afb_wsj1 * WebSocketApi::wsj1 = NULL;
-bool WebSocketApi::reply = false;
-json_object * WebSocketApi::curr_reply = NULL;
 
 WebSocketApi::WebSocketApi(const char * uri, const char * api_name) : uri(uri), api_name(api_name) {
   int rc = 0;
+
+  callcount = 0;
+  curr_reply = NULL;
+  reply = false;
 
 	/* get the default event loop */
 	rc = sd_event_default(&loop);
@@ -53,7 +54,7 @@ WebSocketApi::WebSocketApi(const char * uri, const char * api_name) : uri(uri), 
 		return;
 	}
 
-	wsj1 = afb_ws_client_connect_wsj1(loop, uri, &wsj1_itf, NULL);
+	wsj1 = afb_ws_client_connect_wsj1(loop, uri, &wsj1_itf, this);
 	if (wsj1 == NULL) {
 		fprintf(stderr, "connection to %s failed: %m\n", uri);
     connected = false;
@@ -80,7 +81,8 @@ void WebSocketApi::dec_callcount()
 /* called when wsj1 hangsup */
 void WebSocketApi::on_wsj1_hangup(void *closure, struct afb_wsj1 *wsj1)
 {
-	printf("ON-HANGUP\n");
+  WebSocketApi * obj = static_cast<WebSocketApi *>(closure);
+	printf("ON-HANGUP [%s]\n", obj->api_name);
 	fflush(stdout);
 	exit(0);
 }
@@ -88,13 +90,15 @@ void WebSocketApi::on_wsj1_hangup(void *closure, struct afb_wsj1 *wsj1)
 /* called when wsj1 receives a method invocation */
 void WebSocketApi::on_wsj1_call(void *closure, const char *api, const char *verb, struct afb_wsj1_msg *msg)
 {
+  WebSocketApi * obj = static_cast<WebSocketApi *>(closure);
   // Do nothing
 }
 
 /* called when wsj1 receives an event */
 void WebSocketApi::on_wsj1_event(void *closure, const char *event, struct afb_wsj1_msg *msg)
 {
-		printf("ON-EVENT %s:\n%s\n", event,
+  WebSocketApi * obj = static_cast<WebSocketApi *>(closure);
+	printf("ON-EVENT [%s] %s:\n%s\n", obj->api_name, event,
 				json_object_to_json_string_ext(afb_wsj1_msg_object_j(msg),
 							JSON_C_TO_STRING_PRETTY));
 	fflush(stdout);
@@ -103,16 +107,15 @@ void WebSocketApi::on_wsj1_event(void *closure, const char *event, struct afb_ws
 /* called when wsj1 receives a reply */
 void WebSocketApi::on_wsj1_reply(void *closure, struct afb_wsj1_msg *msg)
 {
-  reply = afb_wsj1_msg_is_reply_ok(msg);
+  WebSocketApi * obj = static_cast<WebSocketApi *>(closure);
+  obj->reply = afb_wsj1_msg_is_reply_ok(msg);
 
-  if (reply) {
-    curr_reply = afb_wsj1_msg_object_j(msg);
-    json_object_get(curr_reply);
+  if (obj->reply) {
+    obj->curr_reply = afb_wsj1_msg_object_j(msg);
+    json_object_get(obj->curr_reply);
   }
 
-	free(closure);
-
-	dec_callcount();
+	obj->dec_callcount();
 }
 
 /* makes a call */
@@ -128,7 +131,7 @@ void WebSocketApi::wsj1_call(const char *api, const char *verb, const char *obje
 	/* send the request */
 	callcount++;
 	reply = false;
-	rc = afb_wsj1_call_s(wsj1, api, verb, object, on_wsj1_reply, key);
+	rc = afb_wsj1_call_s(wsj1, api, verb, object, on_wsj1_reply, this);
 	if (rc < 0) {
 		fprintf(stderr, "calling %s/%s(%s) failed: %m\n", api, verb, object);
 		dec_callcount();
