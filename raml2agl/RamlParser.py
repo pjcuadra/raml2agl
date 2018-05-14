@@ -109,9 +109,24 @@ class RamlParser:
 
         resource_types
 
+    def check_type_is_array(self, type):
+        if '[]' == type[-2:]:
+            return True
+
+        return False
+
+    def get_actual_type_name(self, type_name):
+        if self.check_type_is_array(type_name):
+            return type_name[:-2]
+
+        return type_name
+
     def parse_type(self, yaml, json):
+
         if 'type' in yaml:
-            json.append({'type': yaml['type'], 'name': 'default'})
+            json.append({'type': self.get_actual_type_name(yaml['type']),
+                         'name': 'default',
+                         'array': self.check_type_is_array(yaml['type'])})
             return
 
         tmp_yraml = OrderedDict(sorted(yaml.items()))
@@ -119,8 +134,9 @@ class RamlParser:
         for key, value in tmp_yraml.items():
             if 'type' not in value:
                 continue
-
-            json.append({'type': value['type'], 'name': key})
+            json.append({'type': self.get_actual_type_name(value['type']),
+                         'name': key,
+                         'array': self.check_type_is_array(value['type'])})
 
     def parse_class_method_in_params(self, yaml, json):
 
@@ -190,8 +206,8 @@ class RamlParser:
             if not value:
                 continue
 
-            if all(x not in ['post', 'get'] for x in value.keys()):
-                continue
+            # if all(x not in ['post', 'get'] for x in value.keys()):
+            #     continue
 
             method_name = key[1:]
 

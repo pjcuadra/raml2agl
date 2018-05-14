@@ -38,8 +38,18 @@ int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, maps
   req =  json_object_new_object();
   {% endif %}
   {% for param in verb_desc['in_params'] %}
+  {% if param['array'] %}
+  new_sub_json = json_object_new_array();
+  for (int i = 0; i < in_{{ param['name'] }}_size; i++) {
+    json_object_array_put_idx(new_sub_json, i, json_object_new_int(in_{{ param['name'] }}[i]));
+  }
+  json_object_object_add(req, "{{ param['name'] }}", new_sub_json);
+  new_sub_json = json_object_new_int(in_{{ param['name'] }}_size);
+  json_object_object_add(req, "{{ param['name'] }}_size", new_sub_json);
+  {% else %}
   new_sub_json = {{ maps['type_to_json_new_fn'][param['type']] }}(in_{{ param['name'] }});
   json_object_object_add(req, "{{ param['name'] }}", new_sub_json);
+  {% endif %}
   {% endfor %}
   {% if verb_desc['in_params']|length > 0 %}
   printf("INFO: Verb '{{ verb_name }}' sending %s\n", json_object_to_json_string(req));
