@@ -57,7 +57,8 @@ class Raml2Agl:
             loader=FileSystemLoader(path),
             trim_blocks=True,
             lstrip_blocks=True,
-            keep_trailing_newline=False
+            keep_trailing_newline=False,
+            extensions=['jinja2.ext.loopcontrols']
         )
 
         self.maps = dict()

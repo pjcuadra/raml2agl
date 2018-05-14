@@ -7,7 +7,7 @@ const {{ maps['type_to_cpp'][param['type']] }} in_{{ param['name']|lower }}{% if
 {% for param in method['out_params'] %}
 {% if not loop.first or method['in_params']|length > 0 %}{{ ' ' * indent }}{% endif %}
 {% if param['type'] == 'string' %}const {% endif %}
-{{ maps['type_to_cpp'][param['type']] }} &out_{{ param['name']|lower }}{% if param['array'] %}[], int &out_{{ param['name']|lower }}_size{% endif %}{% if not loop.last %},
+{{ maps['type_to_cpp'][param['type']] }} {% if not param['array'] %}&{% endif %}out_{{ param['name']|lower }}{% if param['array'] %}[], int in_{{ param['name']|lower }}_size{% endif %}{% if not loop.last %},
 {% endif %}
 {% endfor %}
 {%- endmacro %}
@@ -16,17 +16,22 @@ const {{ maps['type_to_cpp'][param['type']] }} in_{{ param['name']|lower }}{% if
 {% for param in method['in_params'] %}
 {% if not loop.first %}{{ ' ' * indent }}{% endif %}
 {% if param['array'] %}
-_val_{{ param['name'] }}, _val_{{ param['name'] }}_size{% if not loop.last or method['out_params']|length > 0 %},
+_var_{{ param['name'] }}, _var_{{ param['name'] }}_size{% if not loop.last or method['out_params']|length > 0 %},
 {% endif %}
 {% else %}
-static_cast<{{ maps['type_to_cpp'][param['type']] }}>({{ maps['type_to_json_get_fn'][param['type']] }}(val[{{ loop.index - 1 }}])){% if not loop.last or method['out_params']|length > 0 %},
+static_cast<{% if param['type'] == 'string' %}const {% endif %}{{ maps['type_to_cpp'][param['type']] }}>({{ maps['type_to_json_get_fn'][param['type']] }}(val[{{ loop.index - 1 }}])){% if not loop.last or method['out_params']|length > 0 %},
 {% endif %}
 {% endif %}
 {% endfor %}
 {% if method['out_params']|length > 0 %}
 {% for param in method['out_params'] %}
 {% if not loop.first or method['in_params']|length > 0 %}{{ ' ' * indent }}{% endif %}
+{% if param['array'] %}
+_var_out_{{ param['name'] }}, _var_in_{{ param['name'] }}_size{% if not loop.last %},
+{% endif %}
+{% else %}
 _var_{{ param['name'] }}{% if not loop.last %},
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endif %}

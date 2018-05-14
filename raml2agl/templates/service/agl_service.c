@@ -34,7 +34,6 @@ static void {{ verb_name }}(struct afb_req request) {
   {% for param in verb_desc['out_params'] %}
   {% if param['type'] == 'string' %}const {% endif %}
   {{ maps['type_to_cpp'][param['type']] }} _var_{{ param['name'] }} = static_cast<{{ maps['type_to_cpp'][param['type']] }}>(0);
-  {% if param['array'] %}int _var_{{ param['name'] }}_size = 0;{% endif %}
   {% endfor %}
   {% if verb_desc['out_params']|length > 0 %}
   json_object * new_json = json_object_new_object();
@@ -46,16 +45,25 @@ static void {{ verb_name }}(struct afb_req request) {
   {% for param in verb_desc['in_params'] %}
   {% if param['array'] %}
   json_object *val_{{ param['name'] }}_size_obj = NULL;
-  int _val_{{ param['name'] }}_size = 0;
-  {{ maps['type_to_cpp'][param['type']] }} * _val_{{ param['name'] }} = nullptr;
+  int _var_{{ param['name'] }}_size = 0;
+  {{ maps['type_to_cpp'][param['type']] }} * _var_{{ param['name'] }} = nullptr;
+  {% endif %}
+  {% endfor %}
+  {% for param in verb_desc['out_params'] %}
+  {% if param['array'] %}
+  {{ maps['type_to_cpp'][param['type']] }} * _var_out_{{ param['name'] }} = nullptr;
+  json_object *val_{{ param['name'] }}_size_obj = NULL;
+  int _var_in_{{ param['name'] }}_size = 0;
   {% endif %}
   {% endfor %}
   int ret = 0;
 
   AFB_NOTICE("[{{ model['api_name'] }}] Calling {{ verb_name }}");
 
-  {% if verb_desc['in_params']|length > 0 %}
+
   if (args) {
+    // Parse args if possible
+  {% if verb_desc['in_params']|length > 0 %}
   {% for param in verb_desc['in_params'] %}
     if (!json_object_object_get_ex(args, "{{ param['name'] }}", &val[{{ loop.index - 1 }}])) {
       AFB_ERROR("[{{ model['api_name'] }}] No '{{ param['name'] }}' param provided");
@@ -69,19 +77,35 @@ static void {{ verb_name }}(struct afb_req request) {
       return;
     }
 
-    _val_{{ param['name'] }}_size = json_object_get_int(val_{{ param['name'] }}_size_obj);
+    _var_{{ param['name'] }}_size = json_object_get_int(val_{{ param['name'] }}_size_obj);
 
-     _val_{{ param['name'] }} = new {{ maps['type_to_cpp'][param['type']] }}[_val_{{ param['name'] }}_size];
+    _var_{{ param['name'] }} = new {{ maps['type_to_cpp'][param['type']] }}[_var_{{ param['name'] }}_size];
 
-     for (int i = 0; i < _val_{{ param['name'] }}_size; i++) {
-       _val_{{ param['name'] }}[i] = static_cast<{{ maps['type_to_cpp'][param['type']] }}>({{ maps['type_to_json_get_fn'][param['type']] }}(json_object_array_get_idx(val[{{ loop.index - 1 }}], i)));
-     }
+    for (int i = 0; i < _var_{{ param['name'] }}_size; i++) {
+      _var_{{ param['name'] }}[i] = static_cast<{{ maps['type_to_cpp'][param['type']] }}>({{ maps['type_to_json_get_fn'][param['type']] }}(json_object_array_get_idx(val[{{ loop.index - 1 }}], i)));
+    }
 
     {% endif %}
   {% endfor %}
+  {% endif %}
+
+  {% for param in verb_desc['out_params'] %}
+  {% if param['array'] %}
+    if (!json_object_object_get_ex(args, "{{ param['name'] }}_size", &val_{{ param['name'] }}_size_obj)) {
+      AFB_ERROR("[{{ model['api_name'] }}] No '{{ param['name'] }}_size' param provided");
+      afb_req_fail(request, "bad-request", "No '{{ param['name'] }}_size' param provided");
+      return;
+    }
+
+    _var_in_{{ param['name'] }}_size = json_object_get_int(val_{{ param['name'] }}_size_obj);
+
+    _var_out_{{ param['name'] }} = new {{ maps['type_to_cpp'][param['type']] }}[_var_in_{{ param['name'] }}_size];
+  {% endif %}
+  {% endfor %}
+
   }
 
-  {% endif %}
+
   ret = obj.{{ verb_name }}({{ list_fn_params_call_json(verb_desc, maps, 6) }});
   if (ret) {
     AFB_ERROR("[{{ model['api_name'] }}] Verb '{{ verb_name }}' returning error");
@@ -91,25 +115,24 @@ static void {{ verb_name }}(struct afb_req request) {
 
   {% for param in verb_desc['in_params'] %}
   {% if param['array'] %}
-  delete [] _val_{{ param['name'] }};
+  delete [] _var_{{ param['name'] }};
   {% endif %}
   {% endfor %}
 
   {% for param in verb_desc['out_params'] %}
   {% if param['array'] %}
   new_sub_json = json_object_new_array();
-  for (int i = 0; i < _var_{{ param['name'] }}_size; i++) {
-    json_object_array_put_idx(new_sub_json, i, _var_{{ param['name'] }}[i]);
+  for (int i = 0; i < _var_in_{{ param['name'] }}_size; i++) {
+    json_object_array_put_idx(new_sub_json, i, {{ maps['type_to_json_new_fn'][param['type']] }}(_var_out_{{ param['name'] }}[i]));
   }
   json_object_object_add(new_json, "{{ param['name'] }}", new_sub_json);
-  new_sub_json = json_object_new_int(_var_{{ param['name'] }}_size);
-  json_object_object_add(new_json, "{{ param['name'] }}", new_sub_json);
+
+  delete [] _var_out_{{ param['name'] }};
+
   {% else %}
   new_sub_json = {{ maps['type_to_json_new_fn'][param['type']] }}(_var_{{ param['name'] }});
   json_object_object_add(new_json, "{{ param['name'] }}", new_sub_json);
   {% endif %}
-
-
   {% endfor %}
 
   {% if verb_desc['out_params']|length > 0 %}
