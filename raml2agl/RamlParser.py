@@ -18,11 +18,25 @@ import json
 import logging
 from collections import OrderedDict
 
-
 media_type = ["application/json", "application/xml"]
 success_return_codes = [200, 201]
 supported_types = ["enum"]
 resource_types = {}
+
+
+def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+    class OrderedLoader(Loader):
+        pass
+
+    def construct_mapping(loader, node):
+        loader.flatten_mapping(node)
+        return object_pairs_hook(loader.construct_pairs(node))
+
+    OrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+        construct_mapping)
+
+    return yaml.load(stream, OrderedLoader)
 
 
 class RamlParser:
@@ -129,9 +143,9 @@ class RamlParser:
                          'array': self.check_type_is_array(yaml['type'])})
             return
 
-        tmp_yraml = OrderedDict(sorted(yaml.items()))
+        tmp_yraml = yaml.items()
 
-        for key, value in tmp_yraml.items():
+        for key, value in tmp_yraml:
             if 'type' not in value:
                 continue
             json.append({'type': self.get_actual_type_name(value['type']),
@@ -224,7 +238,7 @@ class RamlParser:
 
         # Read the model
         f = open(raml_file_path, "r")
-        self.yraml = yaml.load(f.read())
+        self.yraml = ordered_load(f.read(), yaml.SafeLoader)
 
         # Pre process the RAML file
         self.filter_media_type(self.yraml)
