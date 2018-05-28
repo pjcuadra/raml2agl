@@ -19,7 +19,7 @@ import logging
 
 # FIXME: Add all RAML supported types
 type_to_cpp_map = {"integer": "int",
-                   "string": "char *",
+                   "string": "std::string",
                    "number": "double",
                    "boolean": "bool",
                    "any": "void *"}

@@ -32,8 +32,7 @@ static int init()
 static void {{ verb_name }}(struct afb_req request) {
   json_object *args = afb_req_json(request);
   {% for param in verb_desc['out_params'] %}
-  {% if param['type'] == 'string' %}const {% endif %}
-  {{ maps['type_to_cpp'][param['type']] }} _var_{{ param['name'] }} = static_cast<{{ maps['type_to_cpp'][param['type']] }}>(0);
+  {{ maps['type_to_cpp'][param['type']] }} _var_{{ param['name'] }}{% if param['type'] != 'string' %} = static_cast<{{ maps['type_to_cpp'][param['type']] }}>(0){% endif %};
   {% endfor %}
   {% if verb_desc['out_params']|length > 0 %}
   json_object * new_json = json_object_new_object();
@@ -130,7 +129,7 @@ static void {{ verb_name }}(struct afb_req request) {
   delete [] _var_out_{{ param['name'] }};
 
   {% else %}
-  new_sub_json = {{ maps['type_to_json_new_fn'][param['type']] }}(_var_{{ param['name'] }});
+  new_sub_json = {{ maps['type_to_json_new_fn'][param['type']] }}(_var_{{ param['name'] }}{% if param['type'] == 'string' %}.c_str(){% endif %});
   json_object_object_add(new_json, "{{ param['name'] }}", new_sub_json);
   {% endif %}
   {% endfor %}

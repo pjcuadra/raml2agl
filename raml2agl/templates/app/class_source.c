@@ -68,7 +68,7 @@ int {{ model['class_name'] }}::{{ verb_name }}({{ list_fn_params(verb_desc, maps
   new_sub_json = json_object_new_int(in_{{ param['name'] }}_size);
   json_object_object_add(req, "{{ param['name'] }}_size", new_sub_json);
   {% else %}
-  new_sub_json = {{ maps['type_to_json_new_fn'][param['type']] }}(in_{{ param['name'] }});
+  new_sub_json = {{ maps['type_to_json_new_fn'][param['type']] }}(in_{{ param['name'] }}{% if param['type'] == 'string' %}.c_str(){% endif %});
   json_object_object_add(req, "{{ param['name'] }}", new_sub_json);
   {% endif %}
   {% endfor %}
